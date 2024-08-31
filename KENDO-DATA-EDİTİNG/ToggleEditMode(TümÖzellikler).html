@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div class="configurator">
+        <div class="header">Configurator</div>
+        <div class="box-col">
+          <h4>Select Edit Mode</h4>
+          <ul class="options">
+            <li>
+              <select id="selectEditMode">
+                <option>Incell</option>
+                <option>Inline</option>
+                <option>Popup</option>
+              </select>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="grid"></div>
+      <div id="dialog"></div>
+      <script>
+        $(document).ready(function () {
+          // CRUD hizmetlerinin temel URL'si
+          let crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
+
+          // Kendo UI DataSource yapılandırması
+          let dataSource = new kendo.data.DataSource({
+            transport: {
+              read: {
+                url: crudServiceBaseUrl + "/Products",
+                dataType: "jsonp", // JSONP formatında veri al
+              },
+              update: {
+                url: crudServiceBaseUrl + "/Products/Update",
+                dataType: "jsonp", // JSONP formatında veri gönder
+              },
+              destroy: {
+                url: crudServiceBaseUrl + "/Products/Destroy",
+                dataType: "jsonp", // JSONP formatında veri gönder
+              },
+              create: {
+                url: crudServiceBaseUrl + "/Products/Create",
+                dataType: "jsonp", // JSONP formatında veri gönder
+              },
+              parameterMap: function (options, operation) {
+                if (operation !== "read" && options.models) {
+                  // Okuma işlemi dışında ve model varsa, modelleri JSON formatında gönder
+                  return { models: kendo.stringify(options.models) };
+                }
+              },
+            },
+            batch: true, // Toplu işlem desteği
+            pageSize: 20, // Sayfa başına gösterilecek kayıt sayısı
+            schema: {
+              model: {
+                id: "ProductID", // Modelin benzersiz kimlik alanı
+                fields: {
+                  ProductID: { editable: false, nullable: true }, // Ürün kimliği düzenlenemez ve boş olabilir
+                  ProductName: {
+                    validation: {
+                      required: true, // Ürün adı zorunludur
+                      productnamevalidation: function (input) {
+                        // Ürün adının büyük harfle başlamasını doğrulayan özel doğrulama
+                        if (
+                          input.is("[name='ProductName']") &&
+                          input.val() != ""
+                        ) {
+                          input.attr(
+                            "data-productnamevalidation-msg",
+                            "Product Name should start with capital letter"
+                          );
+                          return /^[A-Z]/.test(input.val()); // Büyük harfle başlıyor mu kontrolü
+                        }
+                        return true;
+                      },
+                    },
+                  },
+                  UnitPrice: {
+                    type: "number",
+                    validation: { required: true, min: 1 }, // Birim fiyat zorunlu ve minimum değeri 1 olmalı
+                  },
+                  Discontinued: { type: "boolean" }, // Devam edip etmeme durumu
+                  UnitsInStock: {
+                    type: "number",
+                    validation: { min: 0, required: true }, // Stoktaki birim sayısı zorunlu ve minimum değeri 0 olmalı
+                  },
+                },
+              },
+            },
+          });
+
+          // Grid yapılandırması
+          let grid = $("#grid")
+            .kendoGrid({
+              dataSource: dataSource, // Veri kaynağını ayarla
+              pageable: true, // Sayfalama etkinleştiriliyor
+              height: 550, // Grid'in yüksekliği
+              toolbar: [
+                { name: "create" }, // Oluşturma düğmesi
+                { name: "save" }, // Kaydetme düğmesi
+                { name: "cancel" }, // İptal düğmesi
+                {
+                  name: "switch",
+                  template: `<div class="toolbar"><label for="readOnlyToggle" class="k-mr-sm">Read-only</label>
+                           <input id="readOnlyToggle" /></div>`, // Read-only mod anahtarı
+                },
+              ],
+              columns: [
+                { field: "ProductName", title: "Product Name" }, // Ürün adı sütunu
+                {
+                  field: "UnitPrice",
+                  title: "Unit Price",
+                  format: "{0:c}", // Birim fiyat formatı
+                  width: "120px",
+                },
+                {
+                  field: "UnitsInStock",
+                  title: "Units In Stock",
+                  width: "120px",
+                },
+                { field: "Discontinued", width: "120px" }, // Devam edip etmeme durumu sütunu
+                { command: ["destroy"], title: "&nbsp;", width: "250px" }, // Silme komutu
+              ],
+              editable: {
+                mode: "incell", // Düzenleme modu
+                readonly: true, // Varsayılan olarak salt okunur
+                confirmation: false, // Onay mesajı yok
+              },
+              dataBound: function (e) {
+                // Grid veriler yüklendiğinde çalışacak fonksiyon
+                $("#readOnlyToggle").kendoSwitch({
+                  checked: checked, // Anahtarın başlangıç durumu
+                  size: "small",
+                  change: function (e) {
+                    checked = e.checked;
+                    if (e.checked) {
+                      grid.disableEditing(); // Okuma modunda düzenlemeyi devre dışı bırak
+                      openDialogOnClick(); // Diyalog penceresini aç
+                    } else {
+                      grid.enableEditing(); // Düzenlemeyi etkinleştir
+                    }
+                  },
+                });
+
+                openDialogOnClick(); // Başlangıçta diyalog açma
+              },
+            })
+            .data("kendoGrid");
+
+          // Dropdown menü yapılandırması
+          $("#selectEditMode").kendoDropDownList({
+            value: "Incell",
+            change: function (e) {
+              let selectedValue = this.value(); // Seçilen düzenleme modu
+              let options = grid.getOptions(); // Grid'in mevcut ayarları
+              let commandColumnIdx = options.columns.length - 1; // Komut sütununun indeksi
+              checked = $("#readOnlyToggle").data("kendoSwitch").check(); // Anahtarın mevcut durumu
+
+              switch (selectedValue) {
+                case "Incell":
+                  options.editable = "incell";
+                  options.toolbar = [
+                    { name: "create" }, // Oluşturma düğmesi
+                    { name: "save" }, // Kaydetme düğmesi
+                    { name: "cancel" }, // İptal düğmesi
+                    {
+                      name: "switch",
+                      template: `<div class="toolbar"><label for="readOnlyToggle" class="k-mr-sm">Read-only</label>
+                               <input id="readOnlyToggle" /></div>`, // Read-only mod anahtarı
+                    },
+                  ];
+                  options.columns[commandColumnIdx].command = ["destroy"]; // Sadece silme komutu
+                  break;
+                case "Inline":
+                  options.editable = "inline";
+                  options.toolbar = [
+                    { name: "create" }, // Oluşturma düğmesi
+                    {
+                      name: "switch",
+                      template: `<div class="toolbar"><label for="readOnlyToggle" class="k-mr-sm">Read-only</label>
+                               <input id="readOnlyToggle" /></div>`, // Read-only mod anahtarı
+                    },
+                  ];
+                  options.columns[commandColumnIdx].command = [
+                    "edit",
+                    "destroy",
+                  ]; // Düzenleme ve silme komutları
+                  break;
+                case "Popup":
+                  options.editable = "popup";
+                  options.toolbar = [
+                    { name: "create" }, // Oluşturma düğmesi
+                    {
+                      name: "switch",
+                      template: `<div class="toolbar"><label for="readOnlyToggle" class="k-mr-sm">Read-only</label>
+                               <input id="readOnlyToggle" /></div>`, // Read-only mod anahtarı
+                    },
+                  ];
+                  options.columns[commandColumnIdx].command = [
+                    "edit",
+                    "destroy",
+                  ]; // Düzenleme ve silme komutları
+                  break;
+              }
+              grid.setOptions(options); // Grid ayarlarını güncelle
+            },
+          });
+
+          // Read-only modunu gösteren diyalog penceresi
+          let checked = true;
+          let dialog = $("#dialog")
+            .kendoDialog({
+              width: "360px",
+              visible: false,
+              title: "Read-only",
+              modal: false,
+              content:
+                "<p>The Grid is in read-only mode.<p><p>To be able to edit the content turn it off from the toolbar switch.</p>",
+              actions: [{ text: "I understand" }],
+            })
+            .data("kendoDialog");
+
+          // Diyalog penceresini açma işlevi
+          openDialogOnClick = () => {
+            $(
+              ".k-grid-edit-command, .k-grid-remove-command, .k-grid-add, .k-grid-save-changes, .k-grid-cancel-changes"
+            ).on("click", function () {
+              if (checked) {
+                dialog.open(); // Read-only mod etkinse diyalog penceresini aç
+              }
+            });
+          };
+        });
+      </script>
+
+      <style>
+        .k-grid-switch {
+          margin-left: auto;
+          margin-right: 0;
+        }
+      </style>
+    </div>
+  </body>
+</html>

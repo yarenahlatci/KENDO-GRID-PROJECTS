@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+        <div id="grid"></div>
+<script>
+    $(document).ready(function () {
+    // Belirtilen ID'ye sahip HTML öğesi üzerinde bir Kendo UI Grid oluşturuluyor.
+    $("#grid").kendoGrid({
+        dataSource: {
+            // Batch işlemi, aynı anda birden fazla kayıt üzerinde değişiklik yapılmasına olanak tanır.
+            batch: true,
+            // Veri kaynağının türü OData v4 olarak ayarlanıyor.
+            type: "odata-v4",
+            transport: {
+                // Veri okuma işlemi için kullanılan yapılandırma.
+                read: {
+                    // URL dinamik olarak belirleniyor, bu da veri kaynağının nereden yükleneceğini belirtir.
+                    url: function () {
+                        return "https://demos.telerik.com/kendo-ui/service-v4/odata/Products";
+                    }
+                },
+                // Veri güncelleme işlemi için kullanılan yapılandırma.
+                update: {
+                    url: function (dataItem) {
+                        // URL, güncellenen ürünün ID'sine göre dinamik olarak belirleniyor.
+                        return "https://demos.telerik.com/kendo-ui/service-v4/odata/Products(" + dataItem.ProductID + ")";
+                    }
+                },
+                // Batch işlemleri için kullanılan yapılandırma.
+                batch: {
+                    url: function () {
+                        return "https://demos.telerik.com/kendo-ui/service-v4/odata/$batch";
+                    }
+                },
+                // Yeni veri oluşturma işlemi için kullanılan yapılandırma.
+                create: {
+                    url: function (dataItem) {
+                        // Yeni bir ürün oluşturulurken ProductID'nin gönderilmemesi için siliniyor.
+                        delete dataItem.ProductID;
+                        return "https://demos.telerik.com/kendo-ui/service-v4/odata/Products";
+                    }
+                },
+                // Veri silme işlemi için kullanılan yapılandırma.
+                destroy: {
+                    url: function (dataItem) {
+                        // URL, silinen ürünün ID'sine göre dinamik olarak belirleniyor.
+                        return "https://demos.telerik.com/kendo-ui/service-v4/odata/Products(" + dataItem.ProductID + ")";
+                    }
+                }
+            },
+            // Veri modeli ve doğrulama kuralları tanımlanıyor.
+            schema: {
+                model: {
+                    // Verinin birincil anahtar alanı olarak "ProductID" kullanılıyor.
+                    id: "ProductID",
+                    fields: {
+                        // Ürün ID'si düzenlenebilir değil.
+                        ProductID: { editable: false },
+                        // Ürün Adı zorunlu bir alan.
+                        ProductName: { validation: { required: true } },
+                        // Birim Fiyat alanı sayı türünde ve minimum 1 olmalı.
+                        UnitPrice: { type: "number", validation: { required: true, min: 1 } },
+                        // Ürün devam edip etmediği (boolean türünde).
+                        Discontinued: { type: "boolean" },
+                        // Stok Miktarı sayı türünde ve minimum 0 olmalı.
+                        UnitsInStock: { type: "number", validation: { min: 0, required: true } }
+                    }
+                }
+            },
+            // Her sayfada gösterilecek öğe sayısı.
+            pageSize: 20
+        },
+        // Klavye ile gezinme etkinleştiriliyor.
+        navigatable: true,
+        // Sayfalama (pagination) etkinleştiriliyor.
+        pageable: true,
+        // Grid'in yüksekliği ayarlanıyor.
+        height: 550,
+        // Grid'in üstünde gösterilecek araç çubuğu.
+        toolbar: ["create", "save", "cancel"],
+        // Grid sütunları tanımlanıyor.
+        columns: [
+            // Ürün adı sütunu.
+            "ProductName",
+            // Birim fiyat sütunu, para birimi formatı ve genişlik ayarıyla.
+            { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: 120 },
+            // Stok Miktarı sütunu, genişlik ayarıyla.
+            { field: "UnitsInStock", title: "Units In Stock", width: 120 },
+            // Devam durumu sütunu, genişlik ayarıyla.
+            { field: "Discontinued", width: 120 },
+            // Silme komutu sütunu, genişlik ayarıyla.
+            { command: "destroy", title: "&nbsp;", width: 150 }
+        ],
+        // Grid düzenlenebilir hale getiriliyor.
+        editable: true
+    });
+});
+
+</script>
+  </body>
+</html>
+<!--Bu örnekte verileri datadan çekeriz-->

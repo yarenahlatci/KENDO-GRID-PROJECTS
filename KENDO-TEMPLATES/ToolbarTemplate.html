@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <h4>Toolbar Template as a Function</h4>
+<div id="grid-function-template"></div>
+
+<h4>Custom Button as a Toolbar Template</h4>
+<div id="grid-button-template"></div>
+<script>
+  $(document).ready(function() {
+    // Grid oluşturma
+    var grid = $("#grid-function-template").kendoGrid({
+      dataSource: {
+        type: "odata",
+        transport: {
+          read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products" // Ürün verilerini okuma URL'si
+        }
+      },
+      toolbar: [{ 
+        // Araç çubuğu şablonu
+        template: () => `
+          <button id="refresh"></button>
+          <span class="k-spacer"></span>
+          <div class="toolbar">
+            <label class="category-label" for="category">Filter by category:</label>
+            <input type="search" id="category" style="width: 150px"/>
+          </div>`
+      }],
+      height: 550,
+      sortable: true,
+      columns: [
+        { field: "ProductID", title: "Product ID", width: 100 },
+        { field: "ProductName", title: "Product Name" },
+        { field: "UnitPrice", title: "Unit Price", width: 150 },
+        { field: "QuantityPerUnit", title: "Quantity Per Unit" }
+      ]
+    });
+
+    // Yenileme butonunun yapılandırılması
+    $("#refresh").kendoButton({
+      icon: "arrow-rotate-cw", // Yenileme simgesi
+      click: function() {
+        grid.data("kendoGrid").dataSource.read(); // Grid'in veri kaynağını yenile
+      }
+    });
+
+    // Kategori dropdown menüsünün yapılandırılması
+    var dropDown = $("#category").kendoDropDownList({
+      dataTextField: "CategoryName",
+      dataValueField: "CategoryID",
+      autoBind: false,
+      optionLabel: "All", // Varsayılan seçenek
+      dataSource: {
+        type: "odata",
+        transport: {
+          read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Categories" // Kategori verilerini okuma URL'si
+        }
+      },
+      change: function() {
+        var value = this.value();
+        if (value) {
+          grid.data("kendoGrid").dataSource.filter({ field: "CategoryID", operator: "eq", value: parseInt(value) });
+        } else {
+          grid.data("kendoGrid").dataSource.filter({}); // Filtreyi temizle
+        }
+      }
+    });
+
+    // İkinci Grid'in oluşturulması
+    $("#grid-button-template").kendoGrid({
+      dataSource: {
+        type: "odata",
+        transport: {
+          read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products" // Ürün verilerini okuma URL'si
+        }
+      },
+      toolbar: () => `<button id='refresh-button'>Refresh</button>`, // Araç çubuğunda yenileme butonu
+      height: 550,
+      sortable: true,
+      columns: [
+        { field: "ProductID", title: "Product ID", width: 100 },
+        { field: "ProductName", title: "Product Name" },
+        { field: "UnitPrice", title: "Unit Price", width: 150 },
+        { field: "QuantityPerUnit", title: "Quantity Per Unit" }
+      ]
+    });
+
+    // İkinci Grid'in yenileme butonunun yapılandırılması
+    $("#refresh-button").kendoButton({
+      icon: "arrow-rotate-cw", // Yenileme simgesi
+      click: function() {
+        $("#grid-button-template").data("kendoGrid").dataSource.read(); // İkinci grid'in veri kaynağını yenile
+      }
+    });
+  });
+</script>
+
+<style>
+  .k-toolbar-item {
+    width: 100%;
+  }
+  .k-grid-toolbar
+  {
+    padding: .6em 1.3em .6em .4em;
+  }
+</style>
+</div>
+
+
+</body>
+</html>

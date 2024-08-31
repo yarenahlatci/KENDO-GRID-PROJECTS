@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <script src="../KENDO-DATA-BİNDİNG/products.js"></script>
+
+    <div id="example">
+      <div class="k-rtl">
+        <div id="grid"></div>
+      </div>
+
+      <script>
+        $(document).ready(function () {
+          $("#grid").kendoGrid({
+            dataSource: {
+              data: products,
+              schema: {
+                model: {
+                  fields: {
+                    ProductName: { type: "string" },
+                    UnitPrice: { type: "number" },
+                    UnitsInStock: { type: "number" },
+                    Discontinued: { type: "boolean" },
+                  },
+                },
+              },
+              pageSize: 20,
+            },
+            height: 550,
+            sortable: true,
+            groupable: true,
+            resizable: true,
+            pageable: true,
+            columns: [
+              "ProductName",
+              {
+                field: "UnitPrice",
+                title: "Unit Price",
+                format: "{0:c}",
+                width: "130px",
+              },
+              {
+                field: "UnitsInStock",
+                title: "Units In Stock",
+                width: "130px",
+              },
+              { field: "Discontinued", width: "130px" },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

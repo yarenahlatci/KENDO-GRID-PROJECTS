@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          // "grid" id'li HTML elementine Kendo UI Grid bileşenini uyguluyoruz
+          $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata", // Veri kaynağı türü olarak OData kullanılıyor
+              transport: {
+                // Veri kaynağının nasıl taşınacağını belirten ayarlar
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders", // OData URL'sinden veri okuma
+              },
+              schema: {
+                model: {
+                  fields: {
+                    // Veri modelindeki alanları tanımlıyoruz
+                    OrderID: { type: "number" }, // Sipariş numarası, sayısal türde
+                    Freight: { type: "number" }, // Taşıma ücreti, sayısal türde
+                    ShipName: { type: "string" }, // Taşıma şirketi adı, metin türünde
+                    OrderDate: { type: "date" }, // Sipariş tarihi, tarih türünde
+                    ShipCity: { type: "string" }, // Taşıma şehri, metin türünde
+                  },
+                },
+              },
+              pageSize: 20, // Sayfa başına gösterilecek kayıt sayısı
+              serverPaging: true, // Sunucu tarafında sayfalama
+              serverFiltering: true, // Sunucu tarafında filtreleme
+              serverSorting: true, // Sunucu tarafında sıralama
+            },
+            height: 550, // Grid'in yüksekliği
+            filterable: true, // Grid sütunları filtrelenebilir
+            sortable: true, // Grid sütunları sıralanabilir
+            pageable: true, // Grid'de sayfalama yapılabilir
+            columns: [
+              // Grid'deki sütunları tanımlıyoruz
+              {
+                field: "OrderID", // Sipariş numarası sütunu
+                filterable: false, // Bu sütun için filtreleme devre dışı
+              },
+              "Freight", // Taşıma ücreti sütunu
+              {
+                field: "OrderDate", // Sipariş tarihi sütunu
+                title: "Order Date", // Sütunun başlık adı
+                format: "{0:MM/dd/yyyy}", // Tarih formatı (ay/gün/yıl)
+              },
+              {
+                field: "ShipName", // Taşıma şirketi adı sütunu
+                title: "Ship Name", // Sütunun başlık adı
+              },
+              {
+                field: "ShipCity", // Taşıma şehri sütunu
+                title: "Ship City", // Sütunun başlık adı
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

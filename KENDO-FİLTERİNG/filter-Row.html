@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata",
+              transport: {
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders", // Veri kaynağının URL'si
+              },
+              schema: {
+                model: {
+                  fields: {
+                    OrderID: { type: "number" }, // Sipariş ID'si, sayı türü
+                    Freight: { type: "number" }, // Taşıma ücreti, sayı türü
+                    ShipName: { type: "string" }, // Gönderici adı, string türü
+                    OrderDate: { type: "date" }, // Sipariş tarihi, tarih türü
+                    ShipCity: { type: "string" }, // Gönderici şehir, string türü
+                  },
+                },
+              },
+              pageSize: 20, // Sayfa başına gösterilecek veri sayısı
+              serverPaging: true, // Sunucu tarafında sayfalama
+              serverFiltering: true, // Sunucu tarafında filtreleme
+            },
+            height: 550, // Grid'in yüksekliği
+            filterable: {
+              mode: "row", // Filtreleme modunu satır bazında yapar
+            },
+            pageable: true, // Sayfalama özelliği etkinleştirilir
+            columns: [
+              {
+                field: "OrderID", // Sipariş ID'si sütunu
+                width: 225, // Sütun genişliği
+                filterable: {
+                  cell: {
+                    showOperators: false, // Filtreleme hücresinde operatörleri göstermez
+                  },
+                },
+              },
+              {
+                field: "ShipName", // Gönderici adı sütunu
+                width: 500, // Sütun genişliği
+                title: "Ship Name", // Sütun başlığı
+                filterable: {
+                  cell: {
+                    operator: "contains", // Filtreleme operatörü: içerir
+                    suggestionOperator: "contains", // Öneri operatörü: içerir
+                  },
+                },
+              },
+              {
+                field: "Freight", // Taşıma ücreti sütunu
+                width: 255, // Sütun genişliği
+                filterable: {
+                  cell: {
+                    operator: "gte", // Filtreleme operatörü: büyük veya eşit
+                  },
+                },
+              },
+              {
+                field: "OrderDate", // Sipariş tarihi sütunu
+                width: 255, // Sütun genişliği
+                title: "Order Date", // Sütun başlığı
+                format: "{0:MM/dd/yyyy}", // Tarih formatı
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+        <div id="grid"></div>
+    <script>
+$("#grid").kendoGrid({
+  toolbar: ["excel"], // Grid'in araç çubuğuna Excel'e aktarım düğmesini ekler
+  excel: {
+    fileName: "Kendo UI Grid Export.xlsx", // Excel dosyasının adı ve uzantısı
+    proxyURL: "https://demos.telerik.com/kendo-ui/service/export", // Excel'e aktarma işlemleri için proxy URL
+    filterable: true // Excel raporunda filtreleme desteği
+  },
+  dataSource: {
+    type: "odata", // Veri kaynağı türü olarak OData kullanılıyor
+    transport: {
+      read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products" // OData URL'sinden ürün verilerini okuma
+    },
+    schema: {
+      model: {
+        fields: {
+          UnitsInStock: { type: "number" }, // Stoktaki birimler, sayısal türde
+          ProductName: { type: "string" }, // Ürün adı, metin türünde
+          UnitPrice: { type: "number" }, // Birim fiyat, sayısal türde
+          UnitsOnOrder: { type: "number" }, // Sipariş edilen birimler, sayısal türde
+          UnitsInStock: { type: "number" } // Stoktaki birimler, sayısal türde (tekerrür)
+        }
+      }
+    },
+    pageSize: 7, // Sayfa başına gösterilecek kayıt sayısı
+    group: {
+      field: "UnitsInStock", // Verileri "UnitsInStock" alanına göre grupla
+      aggregates: [
+        { field: "ProductName", aggregate: "count" }, // Ürün adlarının sayısını al
+        { field: "UnitPrice", aggregate: "sum" }, // Birim fiyatlarının toplamını al
+        { field: "UnitsOnOrder", aggregate: "average" }, // Sipariş edilen birimlerin ortalamasını al
+        { field: "UnitsInStock", aggregate: "count" } // Stoktaki birimlerin sayısını al
+      ]
+    },
+    aggregate: [
+      { field: "ProductName", aggregate: "count" }, // Ürün adlarının toplam sayısı
+      { field: "UnitPrice", aggregate: "sum" }, // Birim fiyatlarının toplamı
+      { field: "UnitsOnOrder", aggregate: "average" }, // Sipariş edilen birimlerin ortalaması
+      { field: "UnitsInStock", aggregate: "min" }, // Stoktaki birimlerin minimum değeri
+      { field: "UnitsInStock", aggregate: "max" } // Stoktaki birimlerin maksimum değeri
+    ]
+  },
+  sortable: true, // Grid sütunları sıralanabilir
+  pageable: true, // Grid'de sayfalama yapılabilir
+  groupable: true, // Grid'de gruplama yapılabilir
+  filterable: true, // Grid sütunları filtrelenebilir
+  columnMenu: true, // Sütun menüsü (sıralama, filtreleme vb.) gösterilir
+  reorderable: true, // Grid sütunları yeniden sıralanabilir
+  resizable: true, // Grid sütunları yeniden boyutlandırılabilir
+  columns: [
+    {
+      field: "ProductName", // Ürün adı sütunu
+      title: "Product Name", // Sütunun başlık adı
+      aggregates: ["count"], // Ürün adlarının sayısını gösterir
+      footerTemplate: "Total Count: #=count#", // Footer'da toplam sayıyı gösterir
+      groupFooterTemplate: "Count: #=count#" // Grup footer'ında grup başına sayıyı gösterir
+    },
+    {
+      field: "UnitPrice", // Birim fiyat sütunu
+      title: "Unit Price", // Sütunun başlık adı
+      aggregates: ["sum"] // Toplam birim fiyatları gösterir
+    },
+    {
+      field: "UnitsOnOrder", // Sipariş edilen birimler sütunu
+      title: "Units On Order", // Sütunun başlık adı
+      aggregates: ["average"], // Ortalama sipariş edilen birimleri gösterir
+      footerTemplate: "Average: #=average#", // Footer'da ortalamayı gösterir
+      groupFooterTemplate: "Average: #=average#", // Grup footer'ında grup başına ortalamayı gösterir
+      exportable: false // Bu sütunun Excel'e aktarımında dışa aktarılmasını engeller
+    },
+    {
+      field: "UnitsInStock", // Stoktaki birimler sütunu
+      title: "Units In Stock", // Sütunun başlık adı
+      aggregates: ["min", "max", "count"], // Minimum, maksimum ve toplam sayıyı gösterir
+      footerTemplate: "Min: #= min # Max: #= max #", // Footer'da minimum ve maksimum değerleri gösterir
+      groupHeaderTemplate: "Units In Stock: #= value # (Count: #= count#)" // Grup başlığı için stok ve sayıyı gösterir
+    }
+  ]
+});
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,218 @@
+body {
+  overflow-x: hidden; /* Yatay kaydırma çubuğunu gizle */
+}
+
+/* Edit butonunun stilini özelleştirme */
+.k-grid-edit {
+  border: none; /* Kenarlıkları kaldır */
+  padding: 10px 15px; /* İç boşluk */
+  font-size: 15px; /* Yazı büyüklüğü */
+}
+
+/* Delete butonunun stilini özelleştirme */
+.k-grid-delete {
+  border: none; /* Kenarlıkları kaldır */
+  padding: 10px 15px; /* İç boşluk */
+  font-size: 15px; /* Yazı büyüklüğü */
+}
+
+/* "Ekle" butonunun stilini özelleştirme */
+.custom-create-button {
+  background-color: #155dc9; /* Arka plan rengi */
+  color: white; /* Yazı rengi */
+  font-weight: bold; /* Yazı kalınlığı */
+  border-radius: 5px; /* Kenar yuvarlama */
+  padding: 10px; /* İç boşluk */
+  border: none; /* Kenarlık kaldırma */
+  opacity: 1; /* Varsayılan opacity değeri */
+}
+
+/* "Ekle" butonuna fare ile gelindiğinde veya tıklandığında */
+.custom-create-button:hover, /* Buton üzerine gelindiğinde */
+.custom-create-button:active {
+  opacity: 1 !important; /* Opacity'yi her durumda 1 yap */
+  background-color: #1ad35b; /* Arka plan rengini koru */
+  transition: all 0.5s;
+}
+
+.baslık {
+  text-transform: uppercase; /* Başlığı büyük harfe dönüştür */
+  background: linear-gradient(
+    45deg,
+    #ff6f61,
+    #ffcc5c,
+    #24b47e,
+    #9c074a,
+    #ff5733,
+    #ff6f00,
+    #f4c542,
+    #28b463,
+    #1e90ff,
+    #8a2be2,
+    #ff1493,
+    #40e0d0,
+    #00008b,
+    #39ff14
+  ); /* Geçişli arka plan renkleri */
+  background-size: 400% 400%; /* Arka planın boyutunu genişletir */
+  -webkit-background-clip: text; /* Yazının arka planla dolmasını sağlar */
+  -webkit-text-fill-color: transparent; /* Yazı rengini şeffaf yapar */
+  animation: gradient-animation 5s ease-in-out infinite; /* Animasyon ekler */
+  text-align: center;
+}
+
+/* Geçişli arka plan animasyonunu tanımlar */
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+/* Düzenleme formunun stilini özelleştirme */
+.custom-edit-form {
+  max-width: 600px; /* Maksimum genişlik */
+  margin: 0 auto; /* Merkeze hizala */
+}
+
+/* Form gruplarının stilini özelleştirme */
+.form-group {
+  position: relative; /* Göreli konumlandırma */
+  margin-bottom: 1.5em; /* Alt boşluk */
+}
+
+.form-group label {
+  display: block; /* Label'ı blok eleman olarak göster */
+  margin-bottom: 0.5em; /* Alt boşluk */
+}
+
+.form-group select {
+  width: 100%; /* Tam genişlik */
+  box-sizing: border-box; /* İç boşlukları ve kenarlıkları genişliğe dahil et */
+  padding: 0.5em; /* İç boşluk */
+}
+
+::placeholder {
+  color: rgb(0, 0, 0); /* Placeholder yazı rengi */
+  opacity: 1; /* Firefox için opaklık */
+}
+
+/* Anahtar şeklindeki checkbox */
+.custom-checkbox {
+  display: none; /* Varsayılan checkbox'ı gizle */
+}
+
+.animasyonHover:hover {
+  background-color: rgb(238, 238, 238);
+  transition: all 0.5s;
+}
+.custom-checkbox + .anahtarCheckbox {
+  display: inline-block; /* İnline-block olarak göster */
+  cursor: pointer; /* Fare imlecini işaretçi yap */
+  position: relative; /* Göreli konumlandırma */
+  padding-left: 35px; /* Checkbox genişliği için boşluk */
+  line-height: 20px; /* Satır yüksekliği */
+}
+
+/* Anahtar checkbox için stil */
+.custom-checkbox + .anahtarCheckbox:before {
+  content: ""; /* İçerik yok */
+  position: absolute; /* Mutlak konumlandırma */
+  left: 0; /* Sol konum */
+  top: 50%; /* Üst konum */
+  width: 30px; /* Genişlik */
+  height: 15px; /* Yükseklik */
+  background-color: #ccc; /* Arka plan rengi */
+  border-radius: 15px; /* Kenar yuvarlama */
+  transition: background-color 0.3s; /* Renk geçiş süresi */
+  transform: translateY(-50%); /* Dikey ortalama */
+}
+
+/* Checkbox işaretli olduğunda */
+.custom-checkbox:checked + .anahtarCheckbox:before {
+  background-color: #000e78; /* Anahtarın açık olduğu renk */
+}
+
+/* Anahtar için stil */
+.custom-checkbox + .anahtarCheckbox:after {
+  content: ""; /* İçerik yok */
+  position: absolute; /* Mutlak konumlandırma */
+  left: 2px; /* Sol konum */
+  top: 50%; /* Üst konum */
+  width: 15px; /* Genişlik */
+  height: 15px; /* Yükseklik */
+  background-color: white; /* Arka plan rengi */
+  border-radius: 50%; /* Yuvarlak şekil */
+  transition: transform 0.3s; /* Dönüşüm süresi */
+  transform: translateY(-50%); /* Dikey ortalama */
+}
+
+/* Checkbox işaretli olduğunda anahtarı kaydırma */
+.custom-checkbox:checked + .anahtarCheckbox:after {
+  transform: translate(15px, -50%); /* Anahtarı kaydır */
+}
+
+/* Özelleştirilmiş popup container stilini ayarlama */
+.custom-popup-container {
+  display: grid; /* Grid düzeni */
+  grid-template-columns: 2fr 3fr; /* Sol panel 2 birim, sağ panel 3 birim genişliğinde */
+  height: 100vh; /* Ekranın tamamını kapla */
+  width: 100vw; /* Ekranın tamamını kapla */
+}
+
+/* Sol panelin stilini ayarlama */
+.left-panel {
+  padding: 20px; /* İç boşluk */
+  border-right: 3px solid #ddd; /* Sağ kenar çizgisi */
+  height: 100%; /* Tam yükseklik */
+}
+
+/* Sağ panelin stilini ayarlama */
+.right-panel {
+  display: flex; /* Flex düzeni */
+  flex-direction: column; /* İçerikleri dikey olarak hizala */
+  width: 100%; /* Tam genişlik */
+  height: 100%; /* Tam yükseklik */
+}
+
+/* Kendo UI Text Editor için stil ayarlama */
+#kendoTextEditor {
+  flex: 1; /* Sağ paneldeki tüm boşluğu kapla */
+  width: 100%; /* Tam genişlik */
+  height: 100%; /* Tam yükseklik */
+  box-sizing: border-box; /* İç boşlukları ve kenarlıkları genişliğe dahil et */
+}
+/* Satır seçim kutusunu stilize etme */
+.k-grid .k-checkbox {
+  width: 24px; /* Genişlik */
+  height: 24px; /* Yükseklik */
+  background-color: #f3f3f3; /* Arka plan rengi */
+  border: 1px solid #ddd; /* Kenarlık rengi */
+  border-radius: 4px; /* Kenar yuvarlama */
+  transition: background-color 0.3s, border-color 0.3s; /* Geçiş efekti */
+}
+
+/* Seçim kutusu işaretli olduğunda */
+.k-grid .k-checkbox:checked {
+  background-color: #007bff; /* İşaretli arka plan rengi */
+  border-color: #007bff; /* İşaretli kenarlık rengi */
+}
+
+/* Seçim kutusu üzerine gelindiğinde */
+.k-grid .k-checkbox:hover {
+  border-color: #007bff; /* Üzerine gelindiğinde kenarlık rengi */
+}
+
+/* Seçim kutusunun işaretlenmiş durumundaki stilini özelleştirme */
+.k-grid .k-checkbox:checked:before {
+  content: "✔"; /* İşaretli simge */
+  color: white; /* Simge rengi */
+  font-size: 18px; /* Simge büyüklüğü */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

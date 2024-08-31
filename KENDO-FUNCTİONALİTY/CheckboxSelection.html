@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+    </div>
+    <script>
+      // Seçim değiştiğinde çağrılan fonksiyon
+      function onChange(arg) {
+        kendoConsole.log(
+          "The selected product ids are: [" +
+            this.selectedKeyNames().join(", ") + // Seçilen ürün ID'lerini konsola yazdır
+            "]"
+        );
+      }
+
+      $(document).ready(function () {
+        $("#grid").kendoGrid({
+          dataSource: {
+            pageSize: 10, // Sayfa başına 10 kayıt
+            transport: {
+              read: {
+                url: "https://demos.telerik.com/kendo-ui/service/Products", // Verileri almak için URL
+                dataType: "jsonp", // JSONP formatında veri alma
+              },
+            },
+            schema: {
+              model: {
+                id: "ProductID", // Model için benzersiz ID
+              },
+            },
+          },
+          pageable: true, // Sayfalama etkin
+          scrollable: false, // Kaydırma özelliği kapalı
+          persistSelection: true, // Seçimleri sayfalar arasında koru
+          sortable: true, // Sıralama özelliği etkin
+          change: onChange, // Seçim değiştiğinde onChange fonksiyonunu çağır
+          columns: [
+            { selectable: true, width: "50px" }, // Seçim kutusu, genişlik 50px
+            { field: "ProductName", title: "Product Name" }, // Ürün adı
+            { field: "UnitPrice", title: "Unit Price", format: "{0:c}" }, // Ürün fiyatı, para birimi formatında
+            { field: "UnitsInStock", title: "Units In Stock" }, // Stoktaki birim sayısı
+            { field: "Discontinued" }, // Ürünün sonlandırılmış olup olmadığı
+          ],
+        });
+      });
+    </script>
+
+    <div class="kd-example-console">
+      <div class="header">
+        <span class="title">CONSOLE LOG</span>
+        <span class="clear kd-text-secondary">Clear log</span>
+      </div>
+      <div class="console"></div>
+    </div>
+  </body>
+</html>

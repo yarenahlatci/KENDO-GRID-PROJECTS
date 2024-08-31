@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <script src="products.js"></script>
+    <!--products.js dosyasından veri çekiyoruz-->
+
+    <div id="example">
+      <div id="grid"></div>
+
+      <script>
+        $(document).ready(function () {
+          // "grid" id'li HTML elementine Kendo UI Grid bileşenini uyguluyoruz
+          $("#grid").kendoGrid({
+            dataSource: {
+              // Grid'e bağlanacak veri kaynağını belirtiyoruz
+              data: products, // 'products' adında bir veri dizisini kullanıyoruz
+              schema: {
+                model: {
+                  fields: {
+                    // Veri modelinde yer alacak alanları tanımlıyoruz
+                    ProductName: { type: "string" }, // Ürün adı, metin türünde
+                    UnitPrice: { type: "number" }, // Birim fiyat, sayısal türde
+                    UnitsInStock: { type: "number" }, // Stoktaki birimler, sayısal türde
+                    Discontinued: { type: "boolean" }, // Ürün durumu, boolean (true/false) türünde
+                  },
+                },
+              },
+              pageSize: 20, // Sayfa başına gösterilecek kayıt sayısı
+            },
+            height: 550, // Grid'in yüksekliği
+            scrollable: true, // Grid'de kaydırma çubuğu kullanılabilir
+            sortable: true, // Grid sütunları sıralanabilir
+            filterable: true, // Grid sütunları filtrelenebilir
+            pageable: {
+              input: true, // Sayfa numarasını girmek için bir input alanı sağlar
+              numeric: false, // Sayısal sayfa numaralandırmayı devre dışı bırakır
+            },
+            columns: [
+              // Grid'deki sütunları tanımlıyoruz
+              "ProductName", // Ürün adı sütunu
+              {
+                field: "UnitPrice", // Birim fiyat sütunu
+                title: "Unit Price", // Sütunun başlık adı
+                format: "{0:c}", // Fiyatı para birimi formatında gösterir
+                width: "130px", // Sütun genişliği
+              },
+              {
+                field: "UnitsInStock", // Stoktaki birimler sütunu
+                title: "Units In Stock", // Sütunun başlık adı
+                width: "130px", // Sütun genişliği
+              },
+              {
+                field: "Discontinued", // Ürün durumu sütunu
+                width: "130px", // Sütun genişliği
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>
+<!--Verileri product.js dosyasından çekiyoruz-->

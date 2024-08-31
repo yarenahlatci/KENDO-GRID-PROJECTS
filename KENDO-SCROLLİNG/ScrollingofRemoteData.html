@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service",
+            dataSource = new kendo.data.DataSource({
+              transport: {
+                read: {
+                  url: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                  dataType: "jsonp", // JSONP formatında veri alır
+                },
+                update: {
+                  url: crudServiceBaseUrl + "/Products/Update", // Güncelleme URL'si
+                  dataType: "jsonp", // JSONP formatında veri gönderir
+                },
+                destroy: {
+                  url: crudServiceBaseUrl + "/Products/Destroy", // Silme URL'si
+                  dataType: "jsonp", // JSONP formatında veri gönderir
+                },
+                create: {
+                  url: crudServiceBaseUrl + "/Products/Create", // Yeni ürün oluşturma URL'si
+                  dataType: "jsonp", // JSONP formatında veri gönderir
+                },
+                parameterMap: function (options, operation) {
+                  if (operation !== "read" && options.models) {
+                    // Eğer okuma dışında bir işlem yapılıyorsa ve modeller varsa
+                    return { models: kendo.stringify(options.models) }; // Modelleri JSON formatına çevirir
+                  }
+                  // OData parameterMap işlevini çağırır
+                  return kendo.data.transports["odata"].parameterMap(
+                    options,
+                    operation
+                  );
+                },
+              },
+              pageSize: 20, // Sayfa başına gösterilecek veri sayısı
+              type: "odata", // Veri kaynağı türü OData
+              batch: true, // Toplu işlemler (create, update, delete) desteklenir
+              serverPaging: true, // Sunucu tarafında sayfalama
+              serverSorting: true, // Sunucu tarafında sıralama
+              schema: {
+                model: {
+                  id: "ProductID", // Modeldeki benzersiz kimlik alanı
+                  fields: {
+                    ProductID: { editable: false, nullable: true }, // Ürün ID'si, düzenlenemez ve boş olabilir
+                    ProductName: { validation: { required: true } }, // Ürün adı, gerekli
+                    UnitPrice: {
+                      type: "number",
+                      validation: { required: true, min: 1 }, // Birim fiyat, gerekli ve 1'den büyük olmalı
+                    },
+                    Discontinued: { type: "boolean" }, // Durum, boolean (doğru/yanlış)
+                    UnitsInStock: {
+                      type: "number",
+                      validation: { min: 0, required: true }, // Stoktaki birimler, gerekli ve 0 veya daha büyük olmalı
+                    },
+                  },
+                },
+                data: function (response) {
+                  return response.d ? response.d.results : response; // OData formatında ise 'd.results' içeriği döner
+                },
+              },
+            });
+
+          $("#grid").kendoGrid({
+            dataSource: dataSource,
+            height: 550, // Grid yüksekliği
+            sortable: true, // Sıralama özelliği etkinleştirilir
+            scrollable: {
+              endless: true, // Sonsuz kaydırma etkinleştirilir
+            },
+            pageable: {
+              numeric: false, // Sayısal sayfalama düğmeleri gösterilmez
+              previousNext: false, // Önceki ve sonraki düğmeler gösterilmez
+            },
+            editable: "inline", // Satır içi düzenleme
+            toolbar: ["create"], // Oluşturma düğmesi eklenir
+            columns: [
+              "ProductName", // Ürün adı sütunu
+              {
+                field: "UnitPrice",
+                title: "Unit Price", // Birim fiyat sütunu
+                format: "{0:c}", // Para birimi formatı
+                width: "120px", // Sütun genişliği
+              },
+              {
+                field: "UnitsInStock",
+                title: "Units In Stock", // Stoktaki birimler sütunu
+                width: "120px", // Sütun genişliği
+              },
+              { field: "Discontinued", width: "120px" }, // Durum sütunu
+              { command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }, // Düzenleme ve silme düğmeleri
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

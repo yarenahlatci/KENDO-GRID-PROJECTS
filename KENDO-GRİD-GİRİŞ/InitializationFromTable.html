@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kendo Grid Example</title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <table id="grid">
+        <!-- Tablo başlığı ve gövdesi Kendo Grid tarafından otomatik olarak oluşturulacak -->
+      </table>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        // Tablo verilerini tanımlıyoruz
+        var data = [
+          {
+            make: "Volvo",
+            model: "S60",
+            year: "2010",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Audi",
+            model: "A4",
+            year: "2002",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "BMW",
+            model: "535d",
+            year: "2006",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "BMW",
+            model: "320d",
+            year: "2006",
+            category: "Saloon",
+            airconditioner: "No",
+          },
+          {
+            make: "VW",
+            model: "Passat",
+            year: "2007",
+            category: "Saloon",
+            airconditioner: "No",
+          },
+          {
+            make: "VW",
+            model: "Passat",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Peugeot",
+            model: "407",
+            year: "2006",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Honda",
+            model: "Accord",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "No",
+          },
+          {
+            make: "Alfa Romeo",
+            model: "159",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "No",
+          },
+          {
+            make: "Nissan",
+            model: "Almera",
+            year: "2001",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Mitsubishi",
+            model: "Lancer",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Opel",
+            model: "Vectra",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Toyota",
+            model: "Avensis",
+            year: "2006",
+            category: "Saloon",
+            airconditioner: "No",
+          },
+          {
+            make: "Toyota",
+            model: "Avensis",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Toyota",
+            model: "Avensis",
+            year: "2008",
+            category: "Saloon",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Audi",
+            model: "Q7",
+            year: "2007",
+            category: "SUV",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Hyundai",
+            model: "Santa Fe",
+            year: "2012",
+            category: "SUV",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Hyundai",
+            model: "Santa Fe",
+            year: "2013",
+            category: "SUV",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Nissan",
+            model: "Qashqai",
+            year: "2007",
+            category: "SUV",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Mercedez",
+            model: "B Class",
+            year: "2007",
+            category: "Hatchback",
+            airconditioner: "Yes",
+          },
+          {
+            make: "Lancia",
+            model: "Ypsilon",
+            year: "2006",
+            category: "Hatchback",
+            airconditioner: "Yes",
+          },
+        ];
+
+        // Kendo Grid'i başlatıyoruz
+        $("#grid").kendoGrid({
+          height: 300, //Grid yüksekliği
+          width: 800, //Grid genişliği
+          pageable: true, // Sayfalama özelliği aktif
+          sortable: true, //Sıralama Özelliği aktif
+          dataSource: {
+            data: data,
+            schema: {
+              //Kolona yazılacak verilerin veri tipleri
+              model: {
+                fields: {
+                  make: { type: "string" },
+                  model: { type: "string" },
+                  year: { type: "string" },
+                  category: { type: "string" },
+                  airconditioner: { type: "string" },
+                },
+              },
+            },
+            pageSize: 6, //Sayfa başına düşecek veri. Yani bir sayfada 6 veri olacak
+          },
+          columns: [
+            //Kolon isimleri
+            { field: "make", title: "Car Make" },
+            { field: "model", title: "Car Model" },
+            { field: "year", title: "Year" },
+            { field: "category", title: "Category" },
+            { field: "airconditioner", title: "Air Conditioner" },
+          ],
+        });
+      });
+    </script>
+  </body>
+</html>
+<!--Kendimiz veri ekleriz-->

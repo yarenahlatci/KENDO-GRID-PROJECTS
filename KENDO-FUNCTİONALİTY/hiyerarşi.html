@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          // Ana Kendo Grid'in başlatılması
+          var element = $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata", // Veri kaynağı tipi OData
+              transport: {
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Employees", // Veriyi okumak için URL
+              },
+              pageSize: 6, // Sayfa başına 6 kayıt
+              serverPaging: true, // Sunucu tabanlı sayfalama
+              serverSorting: true, // Sunucu tabanlı sıralama
+            },
+            height: 600, // Grid yüksekliği
+            sortable: true, // Sıralama özelliği etkin
+            pageable: true, // Sayfalama özelliği etkin
+            detailInit: detailInit, // Detay açma fonksiyonu
+            dataBound: function () {
+              // Grid yüklendikten sonra ilk satırı genişlet
+              this.expandRow(this.tbody.find("tr.k-master-row").first());
+            },
+            columns: [
+              {
+                field: "FirstName",
+                title: "First Name", // Başlık: Ad
+                width: "110px", // Sütun genişliği
+              },
+              {
+                field: "LastName",
+                title: "Last Name", // Başlık: Soyad
+                width: "110px", // Sütun genişliği
+              },
+              {
+                field: "Country",
+                width: "110px", // Sütun genişliği
+              },
+              {
+                field: "City",
+                width: "110px", // Sütun genişliği
+              },
+              {
+                field: "Title", // Başlık: Ünvan
+              },
+            ],
+          });
+        });
+
+        // Detay satırı başlatma fonksiyonu
+        function detailInit(e) {
+          $("<div/>") // Yeni bir div oluştur
+            .appendTo(e.detailCell) // Detay hücresinin içine ekle
+            .kendoGrid({
+              dataSource: {
+                type: "odata", // Veri kaynağı tipi OData
+                transport: {
+                  read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders", // Veriyi okumak için URL
+                },
+                serverPaging: true, // Sunucu tabanlı sayfalama
+                serverSorting: true, // Sunucu tabanlı sıralama
+                serverFiltering: true, // Sunucu tabanlı filtreleme
+                pageSize: 10, // Sayfa başına 10 kayıt
+                filter: {
+                  field: "EmployeeID", // Filtreleme yapılacak alan
+                  operator: "eq", // Eşitlik operatörü
+                  value: e.data.EmployeeID, // Filtreleme değeri
+                },
+              },
+              scrollable: false, // Kaydırma özelliği kapalı
+              sortable: true, // Sıralama özelliği etkin
+              pageable: true, // Sayfalama özelliği etkin
+              columns: [
+                { field: "OrderID", width: "110px" }, // Sipariş ID'si
+                { field: "ShipCountry", title: "Ship Country", width: "110px" }, // Gönderim ülkesi
+                { field: "ShipAddress", title: "Ship Address" }, // Gönderim adresi
+                { field: "ShipName", title: "Ship Name", width: "300px" }, // Gönderim adı
+              ],
+            });
+        }
+      </script>
+    </div>
+  </body>
+</html>

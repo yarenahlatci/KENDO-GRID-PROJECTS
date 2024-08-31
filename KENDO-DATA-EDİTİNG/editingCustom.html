@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <script src="../KENDO-DATA-BİNDİNG/products.js"></script>
+    <!-- products.js dosyasını yükler -->
+    <div id="example">
+      <div id="grid"></div>
+      <!-- Grid'in render edileceği HTML elemanı -->
+      <script>
+        $(document).ready(function () {
+          // Verileri sağlayan DataSource oluşturuluyor
+          var dataSource = new kendo.data.DataSource({
+            pageSize: 20, // Sayfa başına gösterilecek kayıt sayısı
+            data: products, // "products" isimli veri kaynağı kullanılır
+            autoSync: true, // Veri değişikliklerinin otomatik olarak senkronize edilmesini sağlar
+            schema: {
+              model: {
+                id: "ProductID", // Modelin benzersiz kimlik alanı
+                fields: {
+                  ProductID: { editable: false, nullable: true }, // Ürün kimliği düzenlenemez ve boş olabilir
+                  ProductName: { validation: { required: true } }, // Ürün adı zorunludur
+                  Category: {
+                    defaultValue: { CategoryID: 1, CategoryName: "Beverages" }, // Kategori için varsayılan değer
+                  },
+                  UnitPrice: {
+                    type: "number", // Birim fiyat sayısal türde
+                    validation: { required: true, min: 1 }, // Birim fiyat zorunlu ve minimum değeri 1 olmalı
+                  },
+                },
+              },
+            },
+          });
+
+          // Grid yapılandırması
+          $("#grid").kendoGrid({
+            dataSource: dataSource, // Veri kaynağı ayarlanıyor
+            pageable: true, // Sayfalama etkinleştiriliyor
+            height: 550, // Grid'in yüksekliği
+            toolbar: ["create"], // Araç çubuğunda sadece oluşturma düğmesi var
+            columns: [
+              { field: "ProductName", title: "Product Name" }, // Ürün adı sütunu
+              {
+                field: "Category", // Kategori sütunu
+                title: "Category",
+                width: "180px", // Sütun genişliği
+                editor: categoryDropDownEditor, // Kategori düzenleyici fonksiyonu
+                template: "#=Category.CategoryName#", // Kategori adını gösteren şablon
+              },
+              {
+                field: "UnitPrice", // Birim fiyat sütunu
+                title: "Unit Price",
+                format: "{0:c}", // Para birimi formatında gösterim
+                width: "130px", // Sütun genişliği
+              },
+              { command: "destroy", title: " ", width: "150px" }, // Satır silme komutu
+            ],
+            editable: true, // Grid düzenlenebilir
+          });
+        });
+
+        // Kategori seçici düzenleyici fonksiyonu
+        function categoryDropDownEditor(container, options) {
+          $('<input required name="' + options.field + '"/>')
+            .appendTo(container)
+            .kendoDropDownList({
+              autoBind: false, // Otomatik veri bağlama devre dışı
+              dataTextField: "CategoryName", // Seçici de gösterilecek veri alanı
+              dataValueField: "CategoryID", // Seçiciye atanacak veri alanı
+              dataSource: {
+                type: "odata", // OData veri kaynağı
+                transport: {
+                  read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Categories", // Kategori verilerini okuma URL'si
+                },
+              },
+            });
+        }
+      </script>
+    </div>
+  </body>
+</html>

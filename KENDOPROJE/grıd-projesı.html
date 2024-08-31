@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Grid Edit Example</title>
+    <!-- Kendo UI CSS stil dosyası -->
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@progress/kendo-font-icons/dist/index.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <!-- jQuery kütüphanesi -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Kendo UI tüm JavaScript dosyalarını içeren kütüphane -->
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div>
+      <h2 class="baslık">
+        <i class="fa-solid fa-star" style="color: #ffffff"></i>
+
+        E-Posta Şablonları
+        <i class="fa-solid fa-star" style="color: #ffffff"></i>
+      </h2>
+    </div>
+    <hr />
+    <!-- Kendo UI grid örneğini içeren ana div -->
+    <div id="example">
+      <!-- Gridin render edileceği div -->
+      <div id="grid"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        // Kendo UI DataSource oluşturma
+        var dataSource = new kendo.data.DataSource({
+          data: [
+            {
+              No: 1,
+              Konu: "Politika Bildirimi",
+              Açıklama:
+                "Bu test amaçlı deneysel veriler içeren fiiliyatta örneği ve geçerliliği olmayan örneklerden birisidir.",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "Departman",
+              DosyaTipi: "PDF,TXT,XLSX",
+            },
+            {
+              No: 2,
+              Konu: "Poliçe Yenileme Hakkında",
+              Açıklama:
+                "Bu şablon test amaçlı olarak kullanıcı deneyimi konusunda fikir vermesi açısından oluşturulmuştur.",
+              Modül: "VIP",
+              ÖzellikAdı: "Departman",
+              DosyaTipi: "MGB,MGP",
+            },
+            {
+              No: 3,
+              Konu: "Düzenlenen Sigorta Poliçeleriniz",
+              Açıklama:
+                "Müşterilere, kendileri ile ilgili hangi poliçelerin düzenlendiğini bildirmek için kullanılan Eposta Şablonudur.",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "",
+              DosyaTipi: "MGP,MGB,MGPB,MGÖ",
+            },
+            {
+              No: 4,
+              Konu: "Zeyl Bildirimi",
+              Açıklama:
+                "Müşterilere, kendileri ile ilgili hangi poliçelerin düzenlendiğini bildirmek için kullanılan Eposta Şablonudur.",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "",
+              DosyaTipi: "PDF,TXT,XLSX",
+            },
+            {
+              No: 5,
+              Konu: "Politika Bildirimi Test Amaçlı",
+              Açıklama:
+                "Bu test amaçlı deneysel veriler içeren fiiliyatta örneği ve geçerliliği olmayan örneklerden birisidir.",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "",
+              DosyaTipi: "PDF,TXT,XLSX",
+            },
+            {
+              No: 73,
+              Konu: "Kayıt Test Amaçlı Oluşturuldu",
+              Açıklama: "Ack",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "",
+              DosyaTipi: "PDF,TXT,XLSX",
+            },
+            {
+              No: 74,
+              Konu: "Tunc Test Sablonu",
+              Açıklama: "Test sablonu",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "",
+              DosyaTipi: "PDF,TXT,PNG,JPG",
+            },
+            {
+              No: 76,
+              Konu: "Geçmiş Döneme Ait Poliçe Bilgileriniz",
+              Açıklama:
+                "Müşteri geçmiş döneme ait poliçe bilgilerinin yer aldığı poliçe şablonu",
+              Modül: "İş Süreçleri",
+              ÖzellikAdı: "Departman",
+              DosyaTipi: "",
+            },
+          ],
+          schema: {
+            model: {
+              id: "No",
+              fields: {
+                No: { editable: false }, // 'No' alanı düzenlenemez
+                Konu: { validation: { required: true } }, // 'Konu' alanı zorunludur
+                Açıklama: { validation: { required: true } }, // 'Açıklama' alanı zorunludur
+                Modül: { validation: { required: true } }, // 'Modül' alanı zorunludur
+                ÖzellikAdı: { validation: { required: false } }, // 'ÖzellikAdı' alanı opsiyoneldir
+                DosyaTipi: { validation: { required: false } }, // 'DosyaTipi' alanı opsiyoneldir
+              },
+            },
+          },
+          pageSize: 10, // Sayfa başına 10 kayıt göster
+        });
+
+        // Kendo UI Grid oluşturma
+        var grid = $("#grid")
+          .kendoGrid({
+            dataSource: dataSource, // Grid veri kaynağı
+            scrollable: false, // Grid kaydırma özelliği kapalı
+            pageable: true, // Sayfalama özelliği açık
+            height: 500, // Grid yüksekliği
+            toolbar: [
+              {
+                name: "create",
+                text: "Ekle", // 'Ekle' butonu
+                className: "custom-create-button", // Butonun özel sınıfı
+              },
+              {
+                template:
+                  '<a class="k-button k-button-icontext k-grid-edit" href="#"><span class="k-icon k-font-icon k-i-pencil"></span>Düzenle</a>', // 'Düzenle' butonu
+              },
+              {
+                template:
+                  '<a class="k-button k-button-icontext k-grid-delete" href="#"><span class="k-icon k-font-icon k-i-delete"></span>Kaldır</a>', // 'Kaldır' butonu
+              },
+            ],
+            columns: [
+              { selectable: true, width: "50px" }, // Satır seçim kutusu
+              { field: "No", title: "No" }, // 'No' sütunu
+              { field: "Konu", title: "Konu" }, // 'Konu' sütunu
+              { field: "Açıklama", title: "Açıklama" }, // 'Açıklama' sütunu
+              { field: "Modül", title: "Modül" }, // 'Modül' sütunu
+              { field: "ÖzellikAdı", title: "Özellik Adı" }, // 'Özellik Adı' sütunu
+              { field: "DosyaTipi", title: "Dosya Tipi" }, // 'Dosya Tipi' sütunu
+            ],
+            editable: {
+              mode: "popup", // Düzenleme modu açılır pencere
+              template: kendo.template($("#customEditTemplate").html()), // Özelleştirilmiş düzenleme şablonu
+              window: {
+                animation: false, // Pencere animasyonları kapalı
+                actions: ["Close", "Minimize", "Pin"], // Pencere eylemleri
+                scrollable: false, // Pencere kaydırma özelliği kapalı
+                width: "100%", // Pencere genişliği
+                height: "100%", // Pencere yüksekliği
+                title: "🌟 DÜZENLE E-POSTA ŞABLONU 🌟", // Pencere başlığı
+                position: {
+                  top: "0%", // Pencere üst konumu
+                  left: "0%", // Pencere sol konumu
+                },
+                open: function () {
+                  // Popup açıldığında sağ paneldeki Kendo UI Text Editor'ı başlat
+                  $("#kendoTextEditor").kendoEditor({
+                    tools: [
+                      "bold",
+                      "italic",
+                      "underline",
+                      "strikethrough",
+                      "subscript",
+                      "superscript",
+                      "createLink",
+                      "unlink",
+                      "insertImage",
+                      "insertFile",
+                      "fontName",
+                      "fontSize",
+                      "foreColor",
+                      "backColor",
+                      "justifyLeft",
+                      "justifyCenter",
+                      "justifyRight",
+                      "justifyFull",
+                      "indent",
+                      "outdent",
+                      "createUl",
+                      "createOl",
+                      "cut",
+                      "copy",
+                      "paste",
+                      "print",
+                      "viewHtml",
+                    ],
+                  });
+                },
+              },
+            },
+          })
+          .data("kendoGrid");
+
+        // Toolbar'daki "Edit" butonu için işlev tanımlama
+        $(document).on("click", ".k-grid-edit", function () {
+          var selected = grid.select(); // Seçilen satırı al
+          if (selected.length > 0) {
+            grid.editRow(selected); // Seçilen satırı düzenle
+          } else {
+            alert("Lütfen düzenlemek istediğiniz satırı seçin."); // Seçim yapılmadıysa uyarı
+          }
+        });
+
+        // Toolbar'daki "Delete" butonu için işlev tanımlama
+        $(document).on("click", ".k-grid-delete", function () {
+          var selected = grid.select(); // Seçilen satırı al
+          if (selected.length > 0) {
+            grid.removeRow(selected); // Seçilen satırı kaldır
+          } else {
+            alert("Lütfen silmek istediğiniz satırı seçin."); // Seçim yapılmadıysa uyarı
+          }
+        });
+      });
+    </script>
+
+    <!-- Özelleştirilmiş düzenleme şablonu -->
+    <script type="text/x-kendo-template" id="customEditTemplate">
+      <div class="custom-popup-container">
+        <div class="left-panel">
+          <!-- Sol panel içeriği -->
+          <div class="form-group">
+            <label for="editKonu">Şablon Başlığı</label>
+            <input type="text" id="editKonu" data-bind="value:Konu" class="k-input animasyonHover" />
+          </div>
+          <div class="form-group">
+            <label for="editAciklama">Açıklama</label>
+            <textarea id="editAciklama" data-bind="value:Açıklama" class="k-input animasyonHover"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editModul">Modül</label>
+            <select id="editModul" data-bind="value:Modül" class="k-dropdown">
+              <option value="modul1">İş Süreçleri</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editKategori">Kategori</label>
+            <select id="editKategori" data-bind="value:Kategori" class="k-dropdown ">
+                <option value="kategori1">ISADIMI</option>
+                <option value="kategori2">GONDERIMTAR</option>
+                <option value="kategori3">SATIRHATIRLATMA</option>
+                <option value="kategori4">GELECEKDONEMEAKTAR</option>
+                <option value="kategori5">PCINS</option>
+                <option value="kategori6">SPOLICENO</option>
+                <option value="kategori7">TAHSILDAR_KAVNO</option>
+                <option value="kategori8">URUNGRUPACK</option>
+                <option value="kategori9">DIGERISACIKLAMA</option>
+                <option value="kategori10">ZEYNO</option>
+                <option value="kategori11">YENISPOLICENO</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="email">E-Posta</label>
+            <input type="text" id="email" data-bind="value:eposta" class="k-input animasyonHover" />
+          </div>
+          <div class="form-group">
+            <label for="editDosyaTipi">Dosya Tipi:</label>
+            <input type="text" id="editDosyaTipi" data-bind="value:DosyaTipi" class="k-input animasyonHover" />
+          </div>
+          <div class="form-group">
+            <input type="checkbox" id="customCheckbox" class="custom-checkbox"/>
+            <label for="customCheckbox" class="anahtarCheckbox">Gönderim Tarihi Boş</label>
+          </div>
+        </div>
+        <div class="right-panel">
+          <!-- Kendo UI Text Editor buraya eklenecek -->
+          <textarea id="kendoTextEditor"></textarea>
+        </div>
+      </div>
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        // Kendo DropDownList'i başlat
+        $("#editModul, #editKategori").kendoDropDownList();
+
+        // Kendo metin düzenleyiciyi başlat
+        $("#kendoEditor").kendoEditor();
+      });
+      $("#kendoTextEditor").css({
+        width: "100%",
+        height: "100%",
+      });
+    </script>
+  </body>
+</html>

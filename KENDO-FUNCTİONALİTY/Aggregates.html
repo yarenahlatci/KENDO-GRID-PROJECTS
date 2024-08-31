@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata", // OData türünde veri kaynağı
+              transport: {
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products", // Verileri okumak için URL
+              },
+              schema: {
+                model: {
+                  fields: {
+                    UnitsInStock: { type: "number" }, // UnitsInStock alanı, sayı türünde
+                    ProductName: { type: "string" }, // ProductName alanı, metin türünde
+                    UnitPrice: { type: "number" }, // UnitPrice alanı, sayı türünde
+                    UnitsOnOrder: { type: "number" }, // UnitsOnOrder alanı, sayı türünde
+                  },
+                },
+              },
+              pageSize: 7, // Sayfa başına 7 kayıt
+              group: {
+                field: "UnitsInStock", // Gruplama yapılacak alan
+                aggregates: [
+                  { field: "ProductName", aggregate: "count" }, // ProductName için sayım (count)
+                  { field: "UnitPrice", aggregate: "sum" }, // UnitPrice için toplam (sum)
+                  { field: "UnitsOnOrder", aggregate: "average" }, // UnitsOnOrder için ortalama (average)
+                  { field: "UnitsInStock", aggregate: "count" }, // UnitsInStock için sayım (count)
+                ],
+              },
+              aggregate: [
+                { field: "ProductName", aggregate: "count" }, // ProductName için sayım (count)
+                { field: "UnitPrice", aggregate: "sum" }, // UnitPrice için toplam (sum)
+                { field: "UnitsOnOrder", aggregate: "average" }, // UnitsOnOrder için ortalama (average)
+                { field: "UnitsInStock", aggregate: "min" }, // UnitsInStock için minimum (min)
+                { field: "UnitsInStock", aggregate: "max" }, // UnitsInStock için maksimum (max)
+              ],
+            },
+            sortable: true, // Sıralama özelliği etkin
+            scrollable: false, // Scrollbar yok
+            pageable: true, // Sayfalama etkin
+            columns: [
+              {
+                field: "ProductName",
+                title: "Product Name", // Başlık
+                aggregates: ["count"], // Aggregation: sayım (count)
+                footerTemplate: "Total Count: #=count#", // Altbilgi şablonu
+                groupFooterTemplate: "Count: #=count#", // Grup altbilgi şablonu
+              },
+              {
+                field: "UnitPrice",
+                title: "Unit Price", // Başlık
+                aggregates: ["sum"], // Aggregation: toplam (sum)
+                groupHeaderColumnTemplate: "Sum: #=sum#", // Grup başlık şablonu
+              },
+              {
+                field: "UnitsOnOrder",
+                title: "Units On Order", // Başlık
+                aggregates: ["average"], // Aggregation: ortalama (average)
+                footerTemplate: "Average: #=average#", // Altbilgi şablonu
+                groupFooterTemplate: "Average: #=average#", // Grup altbilgi şablonu
+              },
+              {
+                field: "UnitsInStock",
+                title: "Units In Stock", // Başlık
+                aggregates: ["min", "max", "count"], // Aggregation: minimum (min), maksimum (max), sayım (count)
+                footerTemplate:
+                  "<div>Min: #= min #</div><div>Max: #= max #</div>", // Altbilgi şablonu
+                groupHeaderTemplate:
+                  "Units In Stock: #= value # (Count: #= count#)", // Grup başlık şablonu
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

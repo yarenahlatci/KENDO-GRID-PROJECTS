@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script type="module">
+        let useAlternateSpannedColor = false;
+        const spannedColorClass = "first-alternate-spanned-cell";
+        const spannedAlternateColorClass = "second-alternate-spanned-cell";
+
+        $(document).ready(function () {
+          var crudServiceBaseUrl =
+              "https://demos.telerik.com/kendo-ui/service/detailproducts",
+            dataSource = new kendo.data.DataSource({
+              transport: {
+                read: {
+                  url: crudServiceBaseUrl,
+                  dataType: "jsonp",
+                },
+                parameterMap: function (options, operation) {
+                  if (operation !== "read" && options.models) {
+                    return { models: kendo.stringify(options.models) };
+                  }
+                },
+              },
+              batch: true,
+              pageSize: 20,
+              autoSync: true,
+              group: {
+                field: "Category.CategoryName",
+                dir: "desc",
+                aggregates: [{ field: "TotalSales", aggregate: "sum" }],
+              },
+              schema: {
+                model: {
+                  id: "ProductID",
+                  fields: {
+                    ProductID: { editable: false, nullable: true },
+                    Discontinued: { type: "boolean", editable: false },
+                    TotalSales: { type: "number", editable: false },
+                    UnitPrice: { type: "number" },
+                    UnitsInStock: { type: "number" },
+                  },
+                },
+              },
+            });
+
+          $("#grid").kendoGrid({
+            dataSource: dataSource,
+            height: 680,
+            pageable: true,
+            sortable: true,
+            navigatable: true,
+            dataBound: onDataBound,
+            columns: [
+              {
+                field: "Category.CategoryName",
+                title: "Category",
+                width: 110,
+                attributes: (dataItem) => {
+                  let grid = $("#grid").getKendoGrid();
+                  const dataView = grid.dataItems();
+                  let currentIndex = dataView.indexOf(dataItem);
+                  const prevDataItem =
+                    currentIndex === 0 ? null : dataView.at(currentIndex - 1);
+                  let nextDataItem = dataView.at(++currentIndex);
+                  let rowSpan = 1;
+
+                  if (
+                    prevDataItem &&
+                    dataItem.Category.CategoryName ===
+                      prevDataItem.Category.CategoryName
+                  ) {
+                    // add 'hidden' attribute to hide the cell if the previous item has the same value
+                    return {
+                      hidden: "hidden",
+                    };
+                  }
+
+                  // calculate the rowspan for a cell
+                  while (nextDataItem) {
+                    if (
+                      dataItem.Category.CategoryName ===
+                      nextDataItem.Category.CategoryName
+                    ) {
+                      rowSpan++;
+                    } else {
+                      break;
+                    }
+
+                    nextDataItem = dataView.at(++currentIndex);
+                  }
+
+                  // the styling attributes or classes to set on the <td> element of the cell
+                  let resultAttributes = {
+                    rowSpan,
+                    style: "text-align: center",
+                  };
+                  if (rowSpan > 1) {
+                    resultAttributes["class"] = !useAlternateSpannedColor
+                      ? spannedColorClass
+                      : spannedAlternateColorClass;
+                    useAlternateSpannedColor = !useAlternateSpannedColor;
+                  }
+
+                  return resultAttributes;
+                },
+              },
+              {
+                field: "ProductName",
+                title: "Product Name",
+                template:
+                  "<div class='product-photo' style='background-image: url(../content/web/foods/#:data.ProductID#.jpg);'></div><div class='product-name'>#: ProductName #</div>",
+                width: 300,
+              },
+              {
+                field: "UnitPrice",
+                title: "Price",
+                format: "{0:c}",
+                width: 105,
+              },
+              {
+                field: "Discontinued",
+                title: "In Stock",
+                template:
+                  "<span id='badge_#=ProductID#' class='badgeTemplate'></span>",
+                width: 130,
+                attributes: ({ Discontinued }) => {
+                  if (Discontinued) {
+                    return {
+                      colSpan: 3,
+                      class: "!k-text-center",
+                    };
+                  } else {
+                    return {
+                      class: "!k-text-center",
+                    };
+                  }
+                },
+              },
+              {
+                field: "UnitsInStock",
+                title: "Units In Stock",
+                width: 105,
+                attributes: ({ Discontinued }) => {
+                  if (Discontinued) {
+                    return { hidden: "hidden" };
+                  }
+                },
+              },
+              {
+                field: "TotalSales",
+                title: "Total Sales",
+                format: "{0:c}",
+                width: 140,
+                aggregates: ["sum"],
+                attributes: ({ Discontinued }) => {
+                  if (Discontinued) {
+                    return { hidden: "hidden" };
+                  }
+                },
+              },
+            ],
+          });
+        });
+
+        function onDataBound(e) {
+          var grid = this;
+          grid.table.find("tr").each(function () {
+            var dataItem = grid.dataItem(this);
+            var themeColor = !dataItem.Discontinued ? "success" : "error";
+            var text = !dataItem.Discontinued ? "available" : "not available";
+
+            $(this).find(".badgeTemplate").kendoBadge({
+              themeColor: themeColor,
+              text: text,
+            });
+
+            kendo.bind($(this), dataItem);
+          });
+        }
+      </script>
+
+      <style type="text/css">
+        .first-alternate-spanned-cell {
+          background-color: #f4f4f4;
+        }
+
+        .second-alternate-spanned-cell {
+          background-color: #e0e0e0;
+        }
+
+        .product-photo {
+          display: inline-block;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background-size: 32px 35px;
+          background-position: center center;
+          vertical-align: middle;
+          line-height: 32px;
+          box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0, 0, 0, 0.2);
+          margin-right: 5px;
+        }
+
+        .product-name {
+          display: inline-block;
+          vertical-align: middle;
+          line-height: 32px;
+          padding-left: 3px;
+        }
+      </style>
+    </div>
+  </body>
+</html>

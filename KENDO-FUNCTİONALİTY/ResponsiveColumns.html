@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata",  // Veri kaynağı tipi OData
+              transport: {
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers",  // Veriyi okumak için URL
+              },
+              pageSize: 20,  // Sayfa başına 20 kayıt
+            },
+            height: 550,  // Grid yüksekliği
+            groupable: true,  // Gruplama özelliği etkin
+            sortable: true,  // Sıralama özelliği etkin
+            pageable: {
+              refresh: true,  // Sayfayı yenileme düğmesi
+              pageSizes: true,  // Sayfa boyutlarını gösterme
+              buttonCount: 5,  // Sayfalama düğmesi sayısı
+            },
+            columns: [
+              {
+                field: "ContactName",
+                title: "Contact Name",  // Sütun başlığı: İletişim Adı
+                media: "(min-width: 450px)",  // Ekran genişliği 450px veya daha büyük olduğunda göster
+              },
+              {
+                field: "ContactTitle",
+                title: "Contact Title",  // Sütun başlığı: İletişim Unvanı
+                width: 250,  // Sütun genişliği
+                media: "(min-width: 850px)",  // Ekran genişliği 850px veya daha büyük olduğunda göster
+              },
+              {
+                field: "CompanyName",
+                title: "Company Name",  // Sütun başlığı: Şirket Adı
+                width: 250,  // Sütun genişliği
+                media: "(min-width: 850px)",  // Ekran genişliği 850px veya daha büyük olduğunda göster
+              },
+              {
+                field: "Country",
+                media: "(min-width: 450px)",  // Ekran genişliği 450px veya daha büyük olduğunda göster
+              },
+              {
+                title: "Items",  // Sütun başlığı: Öğeler
+                template: kendo.template(
+                  $("#responsive-column-template").html()  // Şablon içeriğini al
+                ),
+                media: "(max-width: 450px)",  // Ekran genişliği 450px veya daha küçük olduğunda göster
+              },
+            ],
+          });
+        });
+      </script>
+      
+      <script id="responsive-column-template" type="text/x-kendo-template">
+        <!-- Şablon içeriği -->
+        <strong>Contact Name</strong>
+        <p class="col-template-val">#=data.ContactName#</p>
+      
+        <strong>Contact Title</strong>
+        <p class="col-template-val">#=data.ContactTitle#</p>
+      
+        <strong>Company Name</strong>
+        <p class="col-template-val">#=data.CompanyName#</p>
+      
+        <strong>Country</strong>
+        <p class="col-template-val">#=data.Country#</p>
+      </script>
+      
+
+    <style>
+      .col-template-val {
+        margin: 0 0 1em 0.5em;
+      }
+    </style>
+  </body>
+</html>

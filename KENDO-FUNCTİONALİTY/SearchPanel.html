@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata", // Veri kaynağı tipi OData
+              transport: {
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders", // Veriyi okumak için URL
+              },
+              schema: {
+                model: {
+                  fields: {
+                    OrderID: { type: "number" }, // Sipariş ID'si, sayı türünde
+                    Freight: { type: "number" }, // Nakliye ücreti, sayı türünde
+                    ShipName: { type: "string" }, // Gönderim adı, string türünde
+                    OrderDate: { type: "date" }, // Sipariş tarihi, tarih türünde
+                    ShipCity: { type: "string" }, // Gönderim şehri, string türünde
+                  },
+                },
+              },
+              pageSize: 20, // Sayfa başına 20 kayıt
+              serverPaging: true, // Sunucu tarafı sayfalama etkin
+              serverFiltering: true, // Sunucu tarafı filtreleme etkin
+              serverSorting: true, // Sunucu tarafı sıralama etkin
+            },
+            height: 550, // Grid yüksekliği
+            sortable: {
+              mode: "mixed", // Sıralama modu, hem sıralama hem de sıralama kaldırma izinli
+              allowUnsort: true, // Sıralamayı kaldırma izni
+              showIndexes: true, // Sıralama indekslerini göster
+            },
+            toolbar: ["search"], // Araç çubuğuna arama düğmesi ekle
+            search: {
+              fields: [
+                { name: "OrderID", operator: "eq" }, // Sipariş ID'si için eşitlik operatörü
+                { name: "Freight", operator: "gte" }, // Nakliye ücreti için büyük veya eşit operatörü
+                { name: "ShipName", operator: "contains" }, // Gönderim adı için içerir operatörü
+                { name: "ShipCity", operator: "contains" }, // Gönderim şehri için içerir operatörü
+              ],
+            },
+            columns: [
+              {
+                field: "OrderID",
+                title: "Order ID", // Sütun başlığı: Sipariş ID
+              },
+              "Freight", // Sütun başlığı: Nakliye Ücreti
+              {
+                field: "OrderDate",
+                title: "Order Date", // Sütun başlığı: Sipariş Tarihi
+                format: "{0:MM/dd/yyyy}", // Tarih formatı
+              },
+              {
+                field: "ShipName",
+                title: "Ship Name", // Sütun başlığı: Gönderim Adı
+              },
+              {
+                field: "ShipCity",
+                title: "Ship City", // Sütun başlığı: Gönderim Şehri
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

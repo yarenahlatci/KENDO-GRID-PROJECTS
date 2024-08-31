@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <h4>Client Operations</h4>
+      <div id="client"></div>
+
+      <h4>Server Operations</h4>
+      <div id="server"></div>
+      <script>
+        $(document).ready(function () {
+          var telerikWebServiceBase =
+            "https://demos.telerik.com/kendo-ui/service/";
+
+          $("#client").kendoGrid({
+            dataSource: {
+              transport: {
+                read: {
+                  url: telerikWebServiceBase + "/Products",
+                  dataType: "jsonp",
+                },
+                update: {
+                  url: telerikWebServiceBase + "/Products/Update",
+                  dataType: "jsonp",
+                },
+                destroy: {
+                  url: telerikWebServiceBase + "/Products/Destroy",
+                  dataType: "jsonp",
+                },
+                create: {
+                  url: telerikWebServiceBase + "/Products/Create",
+                  dataType: "jsonp",
+                },
+                parameterMap: function (options, operation) {
+                  if (operation !== "read" && options.models) {
+                    return { models: kendo.stringify(options.models) };
+                  }
+                },
+              },
+              batch: true,
+              pageSize: 20,
+              schema: {
+                model: {
+                  id: "ProductID",
+                  fields: {
+                    ProductID: { editable: false, nullable: true },
+                    ProductName: { validation: { required: true } },
+                    UnitPrice: {
+                      type: "number",
+                      validation: { required: true, min: 1 },
+                    },
+                    Discontinued: { type: "boolean" },
+                    UnitsInStock: {
+                      type: "number",
+                      validation: { min: 0, required: true },
+                    },
+                  },
+                },
+              },
+            },
+            filterable: true,
+            pageable: true,
+            height: 550,
+            toolbar: ["create", "save", "cancel"],
+            columns: [
+              {
+                field: "ProductName",
+                filterable: { multi: true, search: true },
+              },
+              {
+                field: "UnitPrice",
+                title: "Unit Price",
+                format: "{0:c}",
+                width: 120,
+                filterable: { multi: true },
+              },
+              {
+                field: "UnitsInStock",
+                title: "Units In Stock",
+                width: 120,
+                filterable: { multi: true },
+              },
+              {
+                field: "Discontinued",
+                width: 120,
+                filterable: {
+                  multi: true,
+                  dataSource: [{ Discontinued: true }, { Discontinued: false }],
+                },
+              },
+              { command: "destroy", title: "&nbsp;", width: 150 },
+            ],
+            editable: true,
+          });
+
+          $("#server").kendoGrid({
+            dataSource: {
+              type: "odata",
+              transport: {
+                read: telerikWebServiceBase + "Northwind.svc/Employees",
+              },
+              pageSize: 20,
+              serverPaging: true,
+              serverSorting: true,
+              serverFiltering: true,
+            },
+            editable: true,
+            filterable: true,
+            pageable: true,
+            columns: [
+              {
+                field: "FirstName",
+                title: "First Name",
+                filterable: {
+                  multi: true,
+                  dataSource: {
+                    transport: {
+                      read: {
+                        url: telerikWebServiceBase + "Employees/Unique",
+                        dataType: "jsonp",
+                        data: {
+                          field: "FirstName",
+                        },
+                      },
+                    },
+                  },
+                },
+                width: "220px",
+              },
+              {
+                field: "LastName",
+                filterable: {
+                  dataSource: {
+                    transport: {
+                      read: {
+                        url: telerikWebServiceBase + "Employees/Unique",
+                        dataType: "jsonp",
+                        data: {
+                          field: "LastName",
+                        },
+                      },
+                    },
+                  },
+                  multi: true,
+                },
+                title: "Last Name",
+                width: "220px",
+              },
+              {
+                field: "Country",
+                filterable: {
+                  multi: true,
+                  dataSource: {
+                    transport: {
+                      read: {
+                        url: telerikWebServiceBase + "Employees/Unique",
+                        dataType: "jsonp",
+                        data: {
+                          field: "Country",
+                        },
+                      },
+                    },
+                  },
+                  itemTemplate: function (e) {
+                    if (e.field == "all") {
+                      return "<div><label><strong><input type='checkbox' />#= all#</strong></label></div>";
+                    } else {
+                      return (
+                        "<span><label><input type='checkbox' name='" +
+                        e.field +
+                        "' value='#=Country#'/><span>#= Country #</span></label></span>"
+                      );
+                    }
+                  },
+                },
+                width: "220px",
+              },
+              {
+                field: "City",
+                filterable: {
+                  multi: true,
+                  dataSource: [
+                    {
+                      City: "Seattle",
+                    },
+                    {
+                      City: "Tacoma",
+                    },
+                    {
+                      City: "Kirkland",
+                    },
+                    {
+                      City: "Redmond",
+                    },
+                    {
+                      City: "London",
+                    },
+                  ],
+                  checkAll: false,
+                },
+                width: "220px",
+              },
+              {
+                filterable: {
+                  multi: true,
+                  dataSource: {
+                    transport: {
+                      read: {
+                        url: telerikWebServiceBase + "Employees/Unique",
+                        dataType: "jsonp",
+                        data: {
+                          field: "Title",
+                        },
+                      },
+                    },
+                  },
+                },
+                field: "Title",
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

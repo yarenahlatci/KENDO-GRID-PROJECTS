@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="grid"></div>
+    <script>
+      $(document).ready(function () {
+        $("#grid").kendoGrid({
+          dataSource: {
+            data: [
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+            ],
+            schema: {
+              model: {
+                fields: {
+                  ID: { type: "number" }, // ID alanı, sayı türü
+                  Name: { type: "string" }, // Name alanı, string türü
+                  Age: { type: "number" }, // Age alanı, sayı türü
+                },
+              },
+            },
+          },
+          columns: [
+            { field: "ID", title: "ID" }, // ID sütunu
+            { field: "Name", title: "Name" }, // Name sütunu
+            { field: "Age", title: "Age" }, // Age sütunu
+          ],
+          pageable: true, // Sayfalama özelliği etkinleştirilir
+          sortable: true, // Sıralama özelliği etkinleştirilir
+          filterable: true, // Filtreleme özelliği etkinleştirilir
+        });
+      });
+    </script>
+  </body>
+</html>

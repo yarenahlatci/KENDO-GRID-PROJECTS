@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+
+    <div id="example">
+        <div id="grid"></div>
+<script>$(document).ready(function () {
+    // Veri kaynağının taban URL'si
+    var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service",
+    
+    // Kendo UI DataSource bileşenini oluşturuyoruz
+    dataSource = new kendo.data.DataSource({
+        // Veri kaynağı işlemleri için yapılandırmalar
+        transport: {
+            // Okuma işlemi için yapılandırma
+            read: {
+                url: crudServiceBaseUrl + "/detailproducts", // Veri URL'si
+                dataType: "jsonp" // Veri tipi JSONP olarak belirlenmiş
+            },
+            // Güncelleme işlemi için yapılandırma
+            update: {
+                url: crudServiceBaseUrl + "/detailproducts/Update",
+                dataType: "jsonp"
+            },
+            // Silme işlemi için yapılandırma
+            destroy: {
+                url: crudServiceBaseUrl + "/detailproducts/Destroy",
+                dataType: "jsonp"
+            },
+            // Diğer işlemler için veri haritalaması
+            parameterMap: function (options, operation) {
+                if (operation !== "read" && options.models) {
+                    // Güncelleme veya silme işlemlerinde veriyi JSON formatına çevirir
+                    return { models: kendo.stringify(options.models) };
+                }
+            }
+        },
+        batch: true, // Toplu işlemler yapılabilir
+        pageSize: 20, // Sayfa başına gösterilecek kayıt sayısı
+        autoSync: true, // Otomatik senkronizasyon
+        aggregate: [{
+            field: "TotalSales", // Toplam satışlar alanında toplanacak veri
+            aggregate: "sum" // Toplama işlemi
+        }],
+        group: {
+            field: "Category.CategoryName", // Gruplama alanı
+            dir: "desc", // Gruplama yönü (azalan)
+            aggregates: [
+                { field: "TotalSales", aggregate: "sum" } // Gruplama sırasında toplam satışların hesaplanması
+            ]
+        },
+        // Veri modeli yapılandırması
+        schema: {
+            model: {
+                id: "ProductID", // Benzersiz kimlik alanı
+                fields: {
+                    ProductID: { editable: false, nullable: true }, // Düzenlenemez, null olabilir
+                    Discontinued: { type: "boolean", editable: false }, // Boolean türünde, düzenlenemez
+                    TotalSales: { type: "number", editable: false }, // Sayısal türde, düzenlenemez
+                    TargetSales: { type: "number", editable: false }, // Sayısal türde, düzenlenemez
+                    LastSupply: { type: "date" }, // Tarih türünde
+                    UnitPrice: { type: "number" }, // Sayısal türde
+                    UnitsInStock: { type: "number" }, // Sayısal türde
+                    Category: {
+                        defaultValue: {
+                            CategoryID: 8, // Varsayılan kategori ID'si
+                            CategoryName: "Seafood" // Varsayılan kategori adı
+                        }
+                    },
+                    Country: {
+                        defaultValue: {
+                            CountryNameLong: "Bulgaria", // Varsayılan ülke adı
+                            CountryNameShort: "bg" // Varsayılan ülke kısa adı
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Grid bileşenini "grid" id'li HTML elementine uyguluyoruz
+    $("#grid").kendoGrid({
+        dataSource: dataSource, // Veri kaynağını grid'e bağlama
+        columnMenu: {
+            filterable: false // Sütun menüsünde filtrelemeyi devre dışı bırak
+        },
+        height: 680, // Grid yüksekliği
+        editable: "incell", // Hücre içi düzenleme modu
+        pageable: true, // Sayfalama özelliği etkin
+        sortable: true, // Sıralama özelliği etkin
+        navigatable: true, // Grid hücrelerinde gezinme özelliği etkin
+        resizable: true, // Sütunlar yeniden boyutlandırılabilir
+        reorderable: true, // Sütunlar yeniden sıralanabilir
+        groupable: true, // Gruplama özelliği etkin
+        filterable: true, // Filtreleme özelliği etkin
+        dataBound: onDataBound, // Veri bağlandığında çalışacak fonksiyon
+        toolbar: ["excel", "pdf", "search"], // Araç çubuğu düğmeleri (Excel, PDF, arama)
+        pdfExport: function(e) {
+            // PDF export işlemi sırasında grid genişliğini ayarlama
+            const width = e.sender.wrapper.width();
+            e.sender.wrapperClone.width(width);
+            e.sender.wrapperClone.addClass('k-clone');
+        },
+        columns: [{
+            selectable: true, // Satır seçilebilir
+            width: 75, // Sütun genişliği
+            attributes: {
+                "class": "checkbox-align", // Hücredeki checkbox'ı ortalama
+            },
+            headerAttributes: {
+                "class": "checkbox-align", // Başlık hücresindeki checkbox'ı ortalama
+            }
+        }, {
+            field: "ProductName", // Ürün adı alanı
+            title: "Product Name", // Sütun başlığı
+            template: "<div class='product-photo' style='background-image: url(../content/web/foods/#:data.ProductID#.jpg);'></div><div class='product-name'>#: ProductName #</div>", // Özel şablon
+            width: 300 // Sütun genişliği
+        }, {
+            field: "UnitPrice", // Birim fiyat alanı
+            title: "Price", // Sütun başlığı
+            format: "{0:c}", // Para birimi formatı
+            width: 105 // Sütun genişliği
+        }, {
+            field: "Discontinued", // Stok durumu alanı
+            title: "In Stock", // Sütun başlığı
+            template: "<span id='badge_#=ProductID#' class='badgeTemplate'></span>", // Özel şablon
+            width: 130, // Sütun genişliği
+        }, {
+            field: "Category.CategoryName", // Kategori adı alanı
+            title: "Category", // Sütun başlığı
+            editor: clientCategoryEditor, // Kategori editörü
+            groupHeaderTemplate: "Category: #=data.value#, Total Sales: #=kendo.format('{0:c}', aggregates.TotalSales.sum)#", // Grup başlığı şablonu
+            width: 125 // Sütun genişliği
+        }, {
+            field: "CustomerRating", // Müşteri değerlendirmesi alanı
+            title: "Rating", // Sütun başlığı
+            template: "<input id='rating_#=ProductID#' data-bind='value: CustomerRating' class='rating'/>", // Özel şablon
+            editable: returnFalse, // Düzenlenemez alan
+            width: 200 // Sütun genişliği
+        }, {
+            field: "Country.CountryNameLong", // Ülke adı alanı
+            title: "Country", // Sütun başlığı
+            template: "<div class='k-text-center'><img src='../content/web/country-flags/#:data.Country.CountryNameShort#.png' alt='Kendo UI for jQuery Grid #: data.Country.CountryNameLong# Flag' title='#: data.Country.CountryNameLong#' width='30' /></div>", // Özel şablon
+            editor: clientCountryEditor, // Ülke editörü
+            width: 120 // Sütun genişliği
+        }, {
+            field: "UnitsInStock", // Stokta bulunan birimler alanı
+            title: "Units", // Sütun başlığı
+            width: 105 // Sütun genişliği
+        }, {
+            field: "TotalSales", // Toplam satışlar alanı
+            title: "Total Sales", // Sütun başlığı
+            format: "{0:c}", // Para birimi formatı
+            width: 140, // Sütun genişliği
+            aggregates: ["sum"], // Toplama işlemi
+        }, {
+            field: "TargetSales", // Hedef satışlar alanı
+            title: "Target Sales", // Sütun başlığı
+            format: "{0:c}", // Para birimi formatı
+            template: "<span id='chart_#= ProductID#' class='sparkline-chart'></span>", // Özel şablon
+            width: 220 // Sütun genişliği
+        },
+        { command: "destroy", title: "&nbsp;", width: 120 }], // Satırı silme komutu
+    });
+});
+
+// Veri bağlandığında çalışacak fonksiyon
+function onDataBound(e) {
+    var grid = this;
+    grid.table.find("tr").each(function () {
+        var dataItem = grid.dataItem(this);
+        var themeColor = dataItem.Discontinued ? 'success' : 'error'; // Ürün durumu
+        var text = dataItem.Discontinued ? 'available' : 'not available'; // Ürün durumu metni
+
+        // Kendo UI Badge (rozet) bileşenini oluşturma
+        $(this).find(".badgeTemplate").kendoBadge({
+            themeColor: themeColor,
+            text: text,
+        });
+
+        // Kendo UI Rating (derecelendirme) bileşenini oluşturma
+        $(this).find(".rating").kendoRating({
+            min: 1,
+            max: 5,
+            label: false,
+            value: dataItem.CustomerRating,
+            selection: "continuous"
+        });
+
+        // Kendo UI Sparkline (çizgi grafik) bileşenini oluşturma
+        $(this).find(".sparkline-chart").kendoSparkline({
+            legend: {
+                visible: false
+            },
+            data: [dataItem.TargetSales],
+            type: "bar",
+            chartArea: {
+                margin: 0,
+                width: 180,
+                background: "transparent"
+            },
+            seriesDefaults: {
+                labels: {
+                    visible: true,
+                    format: '{0}%',
+                    background: 'none'
+                }
+            },
+            categoryAxis: {
+                majorGridLines: {
+                    visible: false
+                },
+                majorTicks: {
+                    visible: false
+                }
+            },
+            valueAxis: {
+                type: "numeric",
+                min: 0,
+                max: 130,
+                visible: false,
+                labels: {
+                    visible: false
+                },
+                minorTicks: { visible: false },
+                majorGridLines: { visible: false }
+            },
+            tooltip: {
+                visible: false
+            }
+        });
+
+        kendo.bind($(this), dataItem); // Veriyi bileşene bağlama
+    });
+}
+
+// Her zaman false dönen fonksiyon (düzenlemeyi engellemek için kullanılır)
+function returnFalse() {
+    return false;
+}
+
+// Kategori editörü bileşenini oluşturma fonksiyonu
+function clientCategoryEditor(container, options) {
+    $('<input required name="Category">')
+        .appendTo(container)
+        .kendoDropDownList({
+            autoBind: false,
+            dataTextField: "CategoryName",
+            dataValueField: "CategoryID",
+            dataSource: {
+                data: categories
+            }
+        });
+}
+
+// Ülke editörü bileşenini oluşturma fonksiyonu
+function clientCountryEditor(container, options) {
+    $('<input required name="Country">')
+        .appendTo(container)
+        .kendoDropDownList({
+            dataTextField: "CountryNameLong",
+            dataValueField: "CountryNameShort",
+            template: "<div class='dropdown-country-wrap'><img src='../content/web/country-flags/#:CountryNameShort#.png' alt='Kendo UI for jQuery Grid #: CountryNameLong# Flag' title='#: CountryNameLong#' width='30' /><span>#:CountryNameLong #</span></div>",
+            dataSource: {
+                transport: {
+                    read: {
+                        url: " https://demos.telerik.com/kendo-ui/service/countries",
+                        dataType: "jsonp"
+                    }
+                }
+            },
+            autoWidth: true
+        });
+}
+
+// Kategoriler için veri seti
+var categories = [{
+    "CategoryID": 1,
+    "CategoryName": "Beverages"
+}, {
+    "CategoryID": 2,
+    "CategoryName": "Condiments"
+}, {
+    "CategoryID": 3,
+    "CategoryName": "Confections"
+}, {
+    "CategoryID": 4,
+    "CategoryName": "Dairy Products"
+}, {
+    "CategoryID": 5,
+    "CategoryName": "Grains/Cereals"
+}, {
+    "CategoryID": 6,
+    "CategoryName": "Meat/Poultry"
+}, {
+    "CategoryID": 7,
+    "CategoryName": "Produce"
+}, {
+    "CategoryID": 8,
+    "CategoryName": "Seafood"
+}];
+</script>
+    <style>
+                .k-pdf-export .k-clone,
+        .k-pdf-export .k-loader-container {
+            display: none;
+        }
+        .customer-photo {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-size: 32px 35px;
+            background-position: center center;
+            vertical-align: middle;
+            line-height: 32px;
+            box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+            margin-left: 5px;
+        }
+
+        .customer-name {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 32px;
+            padding-left: 3px;
+        }
+
+        .k-grid tr .checkbox-align {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .product-photo {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-size: 32px 35px;
+            background-position: center center;
+            vertical-align: middle;
+            line-height: 32px;
+            box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+            margin-right: 5px;
+        }
+
+        .product-name {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 32px;
+            padding-left: 3px;
+        }
+
+        .k-rating-container .k-rating-item {
+            padding: 4px 0;
+        }
+
+        .k-rating-container .k-rating-item .k-icon {
+            font-size: 16px;
+        }
+
+        .dropdown-country-wrap {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .dropdown-country-wrap img {
+            margin-right: 10px;
+        }
+
+        #grid .k-grid-edit-row > td > .k-rating {
+            margin-left: 0;
+            width: 100%;
+        }
+    </style>
+  </body>
+</html>

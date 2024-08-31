@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+
+  </head>
+  <body>
+    <div id="example">
+        <div id="grid"></div>
+    <script>
+        $(document).ready(function () {
+    // Belirtilen ID'ye sahip HTML öğesi üzerinde bir Kendo UI Grid oluşturuluyor.
+    $("#grid").kendoGrid({
+        dataSource: {
+            // Veri kaynağında manuel olarak girilen veriler tanımlanıyor.
+            data: [
+                { ProductID: 1, ProductName: "Chai", UnitPrice: 18, UnitsInStock: 39, Discontinued: false },
+                { ProductID: 2, ProductName: "Chang", UnitPrice: 19, UnitsInStock: 17, Discontinued: false },
+                { ProductID: 3, ProductName: "Aniseed Syrup", UnitPrice: 10, UnitsInStock: 13, Discontinued: false },
+                { ProductID: 4, ProductName: "Chef Anton's Cajun Seasoning", UnitPrice: 22, UnitsInStock: 53, Discontinued: false },
+                { ProductID: 5, ProductName: "Chef Anton's Gumbo Mix", UnitPrice: 21.35, UnitsInStock: 0, Discontinued: true },
+                { ProductID: 6, ProductName: "Grandma's Boysenberry Spread", UnitPrice: 25, UnitsInStock: 120, Discontinued: false },
+                { ProductID: 7, ProductName: "Uncle Bob's Organic Dried Pears", UnitPrice: 30, UnitsInStock: 15, Discontinued: false },
+                { ProductID: 8, ProductName: "Northwoods Cranberry Sauce", UnitPrice: 40, UnitsInStock: 6, Discontinued: false },
+                { ProductID: 9, ProductName: "Mishi Kobe Niku", UnitPrice: 97, UnitsInStock: 29, Discontinued: true },
+                { ProductID: 10, ProductName: "Ikura", UnitPrice: 31, UnitsInStock: 31, Discontinued: false },
+                { ProductID: 1, ProductName: "Chai", UnitPrice: 18, UnitsInStock: 39, Discontinued: false },
+                { ProductID: 2, ProductName: "Chang", UnitPrice: 19, UnitsInStock: 17, Discontinued: false },
+                { ProductID: 3, ProductName: "Aniseed Syrup", UnitPrice: 10, UnitsInStock: 13, Discontinued: false },
+                { ProductID: 4, ProductName: "Chef Anton's Cajun Seasoning", UnitPrice: 22, UnitsInStock: 53, Discontinued: false },
+                { ProductID: 5, ProductName: "Chef Anton's Gumbo Mix", UnitPrice: 21.35, UnitsInStock: 0, Discontinued: true },
+                { ProductID: 6, ProductName: "Grandma's Boysenberry Spread", UnitPrice: 25, UnitsInStock: 120, Discontinued: false },
+                { ProductID: 7, ProductName: "Uncle Bob's Organic Dried Pears", UnitPrice: 30, UnitsInStock: 15, Discontinued: false },
+                { ProductID: 8, ProductName: "Northwoods Cranberry Sauce", UnitPrice: 40, UnitsInStock: 6, Discontinued: false },
+                { ProductID: 9, ProductName: "Mishi Kobe Niku", UnitPrice: 97, UnitsInStock: 29, Discontinued: true },
+                { ProductID: 10, ProductName: "Ikura", UnitPrice: 31, UnitsInStock: 31, Discontinued: false }
+            ],
+            // Veri modeli ve doğrulama kuralları tanımlanıyor.
+            schema: {
+                model: {
+                    // Verinin birincil anahtar alanı olarak "ProductID" kullanılıyor.
+                    id: "ProductID",
+                    fields: {
+                        // Ürün ID'si düzenlenebilir değil.
+                        ProductID: { editable: false },
+                        // Ürün Adı zorunlu bir alan.
+                        ProductName: { validation: { required: true } },
+                        // Birim Fiyat alanı sayı türünde ve minimum 1 olmalı.
+                        UnitPrice: { type: "number", validation: { required: true, min: 1 } },
+                        // Ürün devam edip etmediği (boolean türünde).
+                        Discontinued: { type: "boolean" },
+                        // Stok Miktarı sayı türünde ve minimum 0 olmalı.
+                        UnitsInStock: { type: "number", validation: { min: 0, required: true } }
+                    }
+                }
+            },
+            // Her sayfada gösterilecek öğe sayısı.
+            pageSize: 10
+        },
+        // Klavye ile gezinme etkinleştiriliyor.
+        navigatable: true,
+        // Sayfalama (pagination) etkinleştiriliyor.
+        pageable: true,
+        // Grid'in yüksekliği ayarlanıyor.
+        height: 550,
+        // Grid'in üstünde gösterilecek araç çubuğu.
+        toolbar: ["create", "save", "cancel"],
+        // Grid sütunları tanımlanıyor.
+        columns: [
+            // Ürün adı sütunu.
+            "ProductName",
+            // Birim fiyat sütunu, para birimi formatı ve genişlik ayarıyla.
+            { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: 120 },
+            // Stok Miktarı sütunu, genişlik ayarıyla.
+            { field: "UnitsInStock", title: "Units In Stock", width: 120 },
+            // Devam durumu sütunu, genişlik ayarıyla.
+            { field: "Discontinued", width: 120 },
+            // Silme komutu sütunu, genişlik ayarıyla.
+            { command: "destroy", title: "&nbsp;", width: 150 }
+        ],
+        // Grid düzenlenebilir hale getiriliyor.
+        editable: {
+              mode: "popup", // Düzenleme modu popup olarak ayarlanır
+              window: {
+                position: {
+                  top: 0,
+                  right: 0,
+                  left: 1425, // Pencere konumu soldan 1630 piksel
+                },
+                width: 492, // Pencerenin genişliği
+                height: 940, // Pencerenin yüksekliği
+              },
+            },
+    });
+});
+
+    </script>
+  </body>
+</html>
+ 
+
+<!--Bu örnekte verileri kendimiz gireriz-->

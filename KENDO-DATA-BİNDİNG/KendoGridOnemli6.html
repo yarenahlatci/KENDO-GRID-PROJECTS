@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="grid"></div>
+
+    <script>
+      $(document).ready(function () {
+        $("#grid").kendoGrid({
+          dataSource: {
+            //Tablo verilerini giriyoruz
+            data: [
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 3, Name: "Doe", Age: 35 },
+            ],
+            schema: {
+              model: {
+                fields: {
+                  //Girelecek verilerin metin tipleri
+                  ID: { type: "number" },
+                  Name: { type: "string" },
+                  Age: { type: "number" },
+                },
+              },
+            },
+            pageSize: 10,
+          },
+          columns: [
+            //Sütunların isimleri
+            { field: "ID", title: "ID" },
+            { field: "Name", title: "Name", template: "<b>#= Name #</b>" }, //Name kısmında yazılan isimler bold (kalın) olacak
+            { field: "Age", title: "Age", template: "#= Age # years old" }, // Yaş girildikten sonra years old otomatik ekleyecek
+          ],
+          pageable: true, ///sayfalanabilir
+          sortable: true, //sıralanabilir
+          filterable: true, //filtreleme işlemi yapılabilir.
+          editable: true, //düzenlenebilir
+          scrollable: true, //kaydırılabilir
+        });
+      });
+    </script>
+  </body>
+</html>

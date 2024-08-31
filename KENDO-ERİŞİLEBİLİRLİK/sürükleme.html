@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div class="k-d-flex k-justify-content-center">
+      <div id="grid"></div>
+    </div>
+    <script>
+      var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
+      var inStockData = [],
+        discontinuedData = [];
+      $.ajax({
+        type: "READ",
+        url: crudServiceBaseUrl + "/Products",
+        dataType: "jsonp",
+        success: function (data) {
+          data.forEach(function (item) {
+            item.Discontinued === false
+              ? inStockData.push(item)
+              : discontinuedData.push(item);
+          });
+        },
+      }).done(function () {
+        var inStockDS = new kendo.data.DataSource({
+          data: inStockData,
+          schema: {
+            model: {
+              id: "ProductID",
+            },
+          },
+          pageSize: 10,
+        });
+
+        $("#grid").data("kendoGrid").setDataSource(inStockDS);
+      });
+      $("#grid").kendoGrid({
+        height: 450,
+        width: 1000,
+        groupable: true,
+        sortable: true,
+        pageable: {
+          refresh: true,
+          pageSizes: true,
+          buttonCount: 5,
+        },
+        reorderable: {
+          columns: true,
+          rows: {
+            clickMoveClick: true,
+          },
+        },
+        dataBound: onDataBound,
+        resizable: true,
+        columnMenu: true,
+        columns: [
+          {
+            draggable: true,
+            width: "100px",
+          },
+          { field: "ProductName", title: "Product Name", width: "200px" },
+          {
+            field: "UnitPrice",
+            title: "Unit Price",
+            format: "{0:c}",
+            width: "140px",
+          },
+          {
+            field: "Discontinued",
+            title: "In Stock",
+            template:
+              "<span id='badge_#=ProductID#' class='badgeTemplate'></span>",
+            attributes: { style: "text-align: center;" },
+            width: "130px",
+          },
+        ],
+      });
+
+      function onDataBound(e) {
+        var grid = this;
+        grid.table.find("tr").each(function () {
+          var dataItem = grid.dataItem(this);
+          var themeColor = dataItem.Discontinued ? "error" : "success";
+          var text = dataItem.Discontinued ? "not available" : "available";
+
+          $(this).find(".badgeTemplate").kendoBadge({
+            themeColor: themeColor,
+            text: text,
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

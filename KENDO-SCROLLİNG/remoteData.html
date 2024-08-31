@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(document).ready(function () {
+          $("#grid").kendoGrid({
+            dataSource: {
+              type: "odata", // OData veri kaynağını belirtir
+              transport: {
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders", // Verileri okuyacağı URL
+              },
+              schema: {
+                model: {
+                  fields: {
+                    OrderID: { type: "number" }, // OrderID alanı, sayı türünde
+                    Freight: { type: "number" }, // Freight alanı, sayı türünde
+                    ShipName: { type: "string" }, // ShipName alanı, metin türünde
+                    OrderDate: { type: "date" }, // OrderDate alanı, tarih türünde
+                    ShipCity: { type: "string" }, // ShipCity alanı, metin türünde
+                  },
+                },
+              },
+              pageSize: 20, // Sayfa başına gösterilecek kayıt sayısı
+              serverPaging: true, // Sunucu tabanlı sayfalama etkinleştirilir
+              serverFiltering: true, // Sunucu tabanlı filtreleme etkinleştirilir
+              serverSorting: true, // Sunucu tabanlı sıralama etkinleştirilir
+            },
+            height: 550, // Grid'in yüksekliği
+            filterable: true, // Filtreleme etkinleştirilir
+            sortable: true, // Sıralama etkinleştirilir
+            pageable: true, // Sayfalama etkinleştirilir
+            columns: [
+              {
+                field: "OrderID", // Sütun alanı
+                filterable: false, // Filtreleme devre dışı bırakılır
+              },
+              "Freight", // Sütun alanı
+              {
+                field: "OrderDate", // Sütun alanı
+                title: "Order Date", // Sütun başlığı
+                format: "{0:MM/dd/yyyy}", // Tarih formatı
+              },
+              {
+                field: "ShipName", // Sütun alanı
+                title: "Ship Name", // Sütun başlığı
+              },
+              {
+                field: "ShipCity", // Sütun alanı
+                title: "Ship City", // Sütun başlığı
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

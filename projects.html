@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <main>      
+        <div class="container">
+          <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+              <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+              <span class="fs-4">Grid Project</span>
+            </a>
+            <ul class="nav nav-pills">
+              <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
+              <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+              <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+            </ul>
+          </header>
+        </div><hr>
+        <div id="example">
+          <div id="grid"></div>
+        </div>
+        <script>
+          function onChange(e) {
+
+          }
+
+          $(document).ready(function(){
+            $("#grid").kendoGrid({
+              dataSource:{
+                data:[
+                  {No: 1, Konu: "Politika Bildirimi",Açıklama: "Bu test amaçlı deneysel veriler içeren fiiliyatta örneği ve geçerliliği olmayan örneklerden birisidir.", Modül: "İş Süreçleri", ÖzellikAdı: "Departman", DosyaTipi: "PDF,TXT,XLSX"	},
+                  {No: 2, Konu: "Poliçe Yenileme Hakkında	",Açıklama: "Bu şablon test amaçlı olarak kullanıcı deneyimi konusunda fikir vermesi açısından oluşturulmuştur.	", Modül: "VIP", ÖzellikAdı: "Departman", DosyaTipi: "MGB,MGP"	},
+                  {No: 3, Konu: "Düzenlenen Sigorta Poliçeleriniz	",Açıklama: "Müşterilere, kendileri ile ilgili hangi poliçelerin düzenlendiğini bildirmek için kullanılan Eposta Şablonudur.	", Modül: "İş Süreçleri", ÖzellikAdı: "", DosyaTipi: "MGP,MGB,MGPB,MGÖ"	},
+                  {No: 4, Konu: "Zeyl Bildirimi	",Açıklama: "Müşterilere, kendileri ile ilgili hangi poliçelerin düzenlendiğini bildirmek için kullanılan Eposta Şablonudur.	", Modül: "İş Süreçleri", ÖzellikAdı: "", DosyaTipi: "PDF,TXT,XLSX"	},
+                  {No: 5, Konu: "Politika Bildirimi Test Amaçlı	",Açıklama: "Bu test amaçlı deneysel veriler içeren fiiliyatta örneği ve geçerliliği olmayan örneklerden birisidir.	", Modül: "İş Süreçleri", ÖzellikAdı: "", DosyaTipi: "PDF,TXT,XLSX"	},
+                  {No: 73, Konu: "Kayıt Test Amaçlı Oluşturuldu	",Açıklama: "Ack	", Modül: "İş Süreçleri", ÖzellikAdı: "", DosyaTipi: "PDF,TXT,XLSX"	},
+                  {No: 74, Konu: "Tunc Test Sablonu	",Açıklama: "Test sablonu	", Modül: "İş Süreçleri", ÖzellikAdı: "", DosyaTipi: "PDF,TXT,PNG,JPG"	},
+                  {No: 76, Konu: "Geçmiş Döneme Ait Poliçe Bilgileriniz	",Açıklama: "Müşteri geçmiş döneme ait poliçe bilgilerinin yer aldığı poliçe şablonu	", Modül: "İş Süreçleri", ÖzellikAdı: "Departman", DosyaTipi: ""	}
+                ],
+                schema:{
+                  model:{
+                    id:"No",
+                    fields:{
+                      No: { editable: false },
+                     Konu: { validation: { required: true } },
+                     Açıklama: { validation: { required: true } },
+                     Modül: { validation: { required: true } },
+                     ÖzellikAdı: { validation: { required: false } },
+                     DosyaTipi: { validation: { required: false } },
+
+                    }
+                  }
+                },
+                pageSize:10,
+              },
+              // Klavye ile gezinme etkinleştiriliyor.
+        navigatable: true,
+        // Sayfalama (pagination) etkinleştiriliyor.
+        pageable: false,
+        // Grid'in yüksekliği ayarlanıyor.
+        height: 600,
+        change: onChange, // Seçim değiştiğinde onChange fonksiyonunu çağır
+        // Grid'in üstünde gösterilecek araç çubuğu.
+        toolbar: ["create", "edit", "cancel"],
+        columns:[
+        { selectable: true, width: "50px" }, // Seçim kutusu, genişlik 50px
+        { field: "No", title: "No"},
+        { field: "Konu", title: "Konu"},
+        { field: "Açıklama", title: "Açıklama"},
+        { field: "Modül", title: "Modül"},
+        { field: "ÖzellikAdı", title: "ÖzellikAdı"},
+        { field: "DosyaTipi", title: "DosyaTipi"},
+        ],
+        editable: {
+              mode: "popup", // Düzenleme modu popup olarak ayarlanır
+              window: {
+                position: {
+                  top: 0,
+                  right: 0,
+                  left: 1425, // Pencere konumu soldan 1630 piksel
+                },
+                width: 492, // Pencerenin genişliği
+                height: 940, // Pencerenin yüksekliği
+              },
+            },
+            })
+          })
+        </script>
+  </body>
+</html>

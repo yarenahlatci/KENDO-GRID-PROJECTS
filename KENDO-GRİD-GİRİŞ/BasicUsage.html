@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+
+  </head>
+  <body>
+    <div id="example">
+        <div id="grid"></div>
+    <script>
+ $(document).ready(function () {
+    // Kendo UI Grid bileşenini "grid" id'li HTML elementine uyguluyoruz.
+    $("#grid").kendoGrid({
+        // Veri kaynağı yapılandırması
+        dataSource: {
+            type: "odata", // Veri kaynağının tipi "odata" olarak belirleniyor
+            transport: {
+                // Veri okuma işlemi için kullanılan URL
+                read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+            },
+            pageSize: 20 // Sayfa başına 20 kayıt gösterilecek
+        },
+        height: 550, // Grid'in yüksekliği piksel cinsinden
+        groupable: true, // Kullanıcıların veriyi gruplandırmasına izin ver
+        sortable: true, // Sütun başlıklarına tıklayarak sıralamaya izin ver
+        pageable: {
+            refresh: true, // Sayfayı yenileme butonunu göster
+            pageSizes: true, // Kullanıcıların sayfa boyutunu seçmesine izin ver
+            buttonCount: 5 // Sayfalandırma için gösterilecek sayfa numarası buton sayısı
+        },
+        columns: [
+            {
+                // Her bir satır için müşteri fotoğrafı ve adını gösteren özel bir şablon
+                template: "<div class='customer-photo'" + //KUllanıcılara fotoğraf ekleniyor
+                    "style='background-image: url(https://www.nojitter.com/sites/default/files/Visual_AdobeStock_240830992_91120.jpeg);'></div>" +
+                    "<div class='customer-name'>#: ContactName #</div>",
+                field: "ContactName", // Temsil edilen alan
+                title: "Contact Name", // Sütun başlığı
+                width: 240 // Sütun genişliği
+            }, 
+            {
+                field: "ContactTitle", // Temsil edilen alan
+                title: "Contact Title" // Sütun başlığı
+            }, 
+            {
+                field: "CompanyName", // Temsil edilen alan
+                title: "Company Name" // Sütun başlığı
+            }, 
+            {
+                field: "Country", // Temsil edilen alan
+                width: 150 // Sütun genişliği
+            }
+        ]
+    });
+});
+
+    </script>
+    <style>
+            .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+    </style>
+  </body>
+</html>

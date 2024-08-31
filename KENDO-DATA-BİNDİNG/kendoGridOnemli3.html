@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <style>
+    /* Responsive stil eklemeleri */
+    @media (max-width: 600px) {
+      .k-grid td,
+      .k-grid th {
+        font-size: 12px;
+      }
+    }
+  </style>
+  <body>
+    <div id="grid"></div>
+
+    <script>
+      $(document).ready(function () {
+        $("#grid").kendoGrid({
+          //Grid yapısını #grid olanla başlatıyoruz
+          dataSource: {
+            //Gridde veri kaynağını oluşturuyoruz
+            data: [
+              //Tablo verileri
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+              { ID: 1, Name: "John", Age: 30 },
+              { ID: 2, Name: "Jane", Age: 25 },
+              { ID: 3, Name: "Doe", Age: 35 },
+            ],
+            schema: {
+              //Verilerin veri tiplerini belirtiyoruz
+              model: {
+                fields: {
+                  ID: { type: "number" },
+                  Name: { type: "string" },
+                  Age: { type: "number" },
+                },
+              },
+            },
+            pageSize: 5, //İlk sayfada sadece 5 veri olsun kalan veriler diğer sayfalarda olacak
+          },
+          columns: [
+            //Kolonların başlıkları
+            { field: "ID", title: "ID" },
+            { field: "Name", title: "Name" },
+            { field: "Age", title: "Age" },
+          ],
+          pageable: true, //Sayfalama aktif
+          sortable: true, //Sıralama aktif
+          columnMenu: true, // Kolon menüsü ekler
+        });
+      });
+    </script>
+  </body>
+</html>

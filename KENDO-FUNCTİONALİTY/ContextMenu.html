@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+
+    <script>
+      kendo.pdf.defineFont({
+        "DejaVu Sans":
+          "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+        "DejaVu Sans|Bold":
+          "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+        "DejaVu Sans|Bold|Italic":
+          "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+        "DejaVu Sans|Italic":
+          "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+        WebComponentsIcons:
+          "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf",
+      });
+    </script>
+
+    <script src="https://unpkg.com/pako/dist/pako_deflate.min.js"></script>
+
+    <div id="example">
+      <div id="grid"></div>
+
+      <script>
+        $(document).ready(function () {
+          var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service"; // CRUD işlemleri için temel URL
+          var dataSource = new kendo.data.DataSource({
+            transport: {
+              read: {
+                url: crudServiceBaseUrl + "/Products", // Ürünleri okumak için URL
+                dataType: "jsonp", // JSONP formatında veri alma
+              },
+              update: {
+                url: crudServiceBaseUrl + "/Products/Update", // Ürünleri güncellemek için URL
+                dataType: "jsonp", // JSONP formatında veri gönderimi
+              },
+              destroy: {
+                url: crudServiceBaseUrl + "/Products/Destroy", // Ürünleri silmek için URL
+                dataType: "jsonp", // JSONP formatında veri gönderimi
+              },
+              create: {
+                url: crudServiceBaseUrl + "/Products/Create", // Ürün oluşturmak için URL
+                dataType: "jsonp", // JSONP formatında veri gönderimi
+              },
+              parameterMap: function (options, operation) {
+                // "read" operasyonu hariç, diğer operasyonlarda modelleri JSON string'e dönüştür
+                if (operation !== "read" && options.models) {
+                  return { models: kendo.stringify(options.models) };
+                }
+              },
+            },
+            batch: true, // Batch işlemleri etkin
+            pageSize: 20, // Sayfa başına 20 kayıt
+            schema: {
+              model: {
+                id: "ProductID", // Model için benzersiz ID
+                fields: {
+                  ProductID: { editable: false, nullable: true }, // ProductID düzenlenemez ve boş olabilir
+                  ProductName: { validation: { required: true } }, // Ürün adı zorunlu
+                  UnitPrice: {
+                    type: "number",
+                    validation: { required: true, min: 1 }, // Birim fiyat zorunlu ve en az 1 olmalı
+                  },
+                  Discontinued: { type: "boolean" }, // Ürünün sonlandırılmış olup olmadığı
+                  UnitsInStock: {
+                    type: "number",
+                    validation: { min: 0, required: true }, // Stoktaki birim sayısı zorunlu ve 0'dan küçük olamaz
+                  },
+                },
+              },
+            },
+          });
+
+          $("#grid").kendoGrid({
+            contextMenu: true, // Sağ tıklama menüsünü etkinleştir
+            excel: {
+              fileName: "Kendo UI Grid Export.xlsx", // Excel dosya adı
+              proxyURL: "https://demos.telerik.com/kendo-ui/service/export", // Export için proxy URL
+              filterable: true, // Excel export için filtreleme özelliği
+              allPages: true, // Tüm sayfaları export et
+            },
+            persistSelection: true, // Seçimleri sayfalar arasında koru
+            dataSource: dataSource, // DataSource ayarlarını kullan
+            selectable: "multiple, rows", // Çoklu satır seçimi etkin
+            sortable: true, // Sıralama özelliği etkin
+            reorderable: {
+              rows: true, // Satırları yeniden sıralama özelliği etkin
+            },
+            pdf: {
+              allPages: true, // PDF export için tüm sayfaları dahil et
+              avoidLinks: true, // PDF'de linkleri önle
+              paperSize: "A4", // PDF kağıt boyutu
+              margin: { top: "2cm", left: "1cm", right: "1cm", bottom: "1cm" }, // PDF kenar boşlukları
+              landscape: true, // PDF'yi yatay olarak yazdır
+            },
+            pageable: true, // Sayfalama özelliği etkin
+            height: 550, // Grid yüksekliği
+            columns: [
+              { field: "ProductName", title: "Product Name" }, // Ürün adı sütunu
+              {
+                field: "UnitPrice",
+                title: "Unit Price",
+                format: "{0:c}", // Para birimi formatı
+                width: "120px", // Sütun genişliği
+              },
+              {
+                field: "UnitsInStock",
+                title: "Units In Stock",
+                width: "120px", // Sütun genişliği
+              },
+              { field: "Discontinued", width: "120px" }, // Ürünün sonlandırılmış olup olmadığı sütunu
+              {
+                command: ["edit", "destroy"], // Edit ve silme komutları
+                title: "&nbsp;", // Boş başlık
+                width: "250px", // Sütun genişliği
+                exportable: false, // Export edilebilir değil
+              },
+            ],
+            editable: "popup", // Düzenleme penceresi aç
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

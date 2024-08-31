@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kendo UI Grid - Yan Panel Düzenleme</title>
+    <!-- Kendo UI ve jQuery Kütüphaneleri -->
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+    <style>
+      #drawer {
+        width: 300px;
+      }
+      .k-drawer-content {
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Grid'in Görüntüleneceği HTML Elemanı -->
+    <div id="grid"></div>
+
+    <!-- Yan Panel için Drawer Elemanı -->
+    <div id="drawer"></div>
+
+    <script>
+      $(document).ready(function () {
+        // Kendo UI Drawer (Yan Panel) oluşturulması
+        var drawer = $("#drawer")
+          .kendoDrawer({
+            width: "300px", // Yan panel genişliği
+            mini: true, // Mini modda başlangıç
+            position: "right", // Sağdan açılması
+            template: `
+                    <h3>Düzenleme Formu</h3>
+                    <form id="editForm">
+                        <label for="id">ID:</label>
+                        <input type="number" id="id" class="k-textbox" disabled/><br>
+                        <label for="ad">Ad:</label>
+                        <input type="text" id="ad" class="k-textbox"/><br>
+                        <label for="soyad">Soyad:</label>
+                        <input type="text" id="soyad" class="k-textbox"/><br>
+                        <label for="yas">Yaş:</label>
+                        <input type="number" id="yas" class="k-textbox"/><br>
+                        <button id="saveButton" type="button" class="k-button k-primary">Kaydet</button>
+                        <button id="cancelButton" type="button" class="k-button">İptal</button>
+                    </form>
+                `,
+          })
+          .data("kendoDrawer");
+
+        // Kendo UI Grid oluşturulması
+        $("#grid").kendoGrid({
+          dataSource: {
+            data: [
+              { id: 1, ad: "Ali", soyad: "Yılmaz", yas: 30 },
+              { id: 2, ad: "Ayşe", soyad: "Kara", yas: 25 },
+              { id: 3, ad: "Mehmet", soyad: "Demir", yas: 40 },
+            ],
+            schema: {
+              model: {
+                fields: {
+                  id: { type: "number" },
+                  ad: { type: "string" },
+                  soyad: { type: "string" },
+                  yas: { type: "number" },
+                },
+              },
+            },
+            pageSize: 5,
+          },
+          height: 400,
+          toolbar: ["create"], // Create butonu
+          editable: false, // Grid içinde düzenleme kapalı
+          pageable: true,
+          sortable: true,
+          columns: [
+            { field: "id", title: "ID", width: "50px" },
+            { field: "ad", title: "Ad", width: "150px" },
+            { field: "soyad", title: "Soyad", width: "150px" },
+            { field: "yas", title: "Yaş", width: "100px" },
+          ],
+        });
+
+        // Create butonuna tıklama olayı
+        $(".k-grid-add").click(function () {
+          drawer.show(); // Yan paneli göster
+        });
+
+        // Kaydet butonuna tıklama olayı
+        $("#saveButton").click(function () {
+          // Formdan verileri al
+          var yeniKayit = {
+            id: $("#id").val(),
+            ad: $("#ad").val(),
+            soyad: $("#soyad").val(),
+            yas: $("#yas").val(),
+          };
+
+          // Veriyi grid'e ekle
+          var grid = $("#grid").data("kendoGrid");
+          grid.dataSource.add(yeniKayit);
+
+          // Yan paneli kapat
+          drawer.hide();
+        });
+
+        // İptal butonuna tıklama olayı
+        $("#cancelButton").click(function () {
+          drawer.hide(); // Yan paneli kapat
+        });
+      });
+    </script>
+  </body>
+</html>

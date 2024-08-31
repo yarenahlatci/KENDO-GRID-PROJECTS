@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="grid"></div>
+
+    <script>
+      $("#grid").kendoGrid({
+        toolbar: ["excel"], // Grid'in araç çubuğuna Excel'e aktarım düğmesini ekler
+        excel: {
+          fileName: "Kendo UI Grid Export.xlsx", // Excel dosyasının adı ve uzantısı
+        },
+        dataSource: {
+          type: "odata", // Veri kaynağı türü olarak OData kullanılıyor
+          transport: {
+            read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products", // OData URL'sinden ürün verilerini okuma
+          },
+          pageSize: 7, // Sayfa başına gösterilecek kayıt sayısı
+        },
+        sortable: true, //sıralanabilir
+        pageable: true, //sayfalanabilir
+        groupable: true, //gruplanabilir
+        filterable: true, //filtrelenebilir
+        columnMenu: true, //sütun menü
+        reorderable: true, //yeniden sıralanabilir
+        resizable: true, //yeniden boyutlandırılabilir
+
+        columns: [
+          // Grid'deki sütunları tanımlıyoruz
+          {
+            width: 300, // Sütun genişliği
+            field: "ProductName", // Ürün adı sütunu
+            title: "Product Name", // Sütunun başlık adı
+          },
+          {
+            field: "UnitsOnOrder", // Sipariş edilen birimler sütunu
+            title: "Units On Order", // Sütunun başlık adı
+          },
+          {
+            field: "UnitsInStock", // Stoktaki birimler sütunu
+            title: "Units In Stock", // Sütunun başlık adı
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>

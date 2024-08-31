@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <div id="example">
+      <div id="grid"></div>
+      <script>
+        $(function () {
+          var columns = []; // Grid sütunlarını saklayacak dizi
+          var data = []; // Grid verilerini saklayacak dizi
+          var numberOfColumns = 500; // Sütun sayısı
+          var numberOfRows = 100; // Satır sayısı
+          var field; // Sütun adı
+          var row; // Satır verisi
+          var i; // Döngü değişkeni
+          var j; // Döngü değişkeni
+
+          // Sütunları oluştur
+          for (i = 1; i <= numberOfColumns; i++) {
+            field = "Field" + i; // Sütun adı
+            columns.push({ field: field, title: field, width: 200 }); // Sütunları columns dizisine ekle
+          }
+
+          // Verileri oluştur
+          for (i = 1; i <= numberOfRows; i++) {
+            row = {}; // Yeni bir satır oluştur
+            for (j = 1; j <= numberOfColumns; j++) {
+              field = "Field" + j; // Sütun adı
+              row[field] = "R" + i + ":C" + j; // Satır verisini oluştur
+            }
+            data.push(row); // Satırı data dizisine ekle
+          }
+
+          // Kendo UI DataSource yapılandırması
+          var dataSource = new kendo.data.DataSource({
+            pageSize: 10, // Sayfa başına gösterilecek kayıt sayısı
+            transport: {
+              read: function (e) {
+                e.success(data); // Veriyi döndür
+              },
+            },
+          });
+
+          // Grid yapılandırması
+          $("#grid").kendoGrid({
+            dataSource: dataSource, // Veri kaynağını ayarla
+            sortable: true, // Sıralama etkinleştir
+            scrollable: {
+              virtual: "columns", // Sadece sütunları sanal kaydırma ile göster
+            },
+            width: 1000, // Grid genişliği
+            navigatable: true, // Navigasyon etkinleştir
+            filterable: true, // Filtreleme etkinleştir
+            columnMenu: true, // Sütun menüsü etkinleştir
+            pageable: {
+              refresh: true, // Yenileme düğmesi etkinleştir
+              pageSize: 10, // Sayfa başına gösterilecek kayıt sayısı
+              pageSizes: true, // Sayfa boyutlarını seçme özelliği etkinleştir
+              buttonCount: 5, // Sayfalama düğmesi sayısı
+            },
+            columns: columns, // Oluşturulan sütunları ayarla
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>
