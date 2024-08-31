@@ -216,3 +216,15 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/* Kendo UI pencere başlık çubuğu için stil */
+.k-window-titlebar {
+  background-color: #eaeaea; /* Başlık çubuğu arka plan rengi */
+  font-weight: bold; /* Kalın yazı */
+}
+
+/* Kendo UI pencere başlık metni için stil */
+.k-window-title {
+  color: #000000; /* Başlık metni rengi */
+  font-size: 18px; /* Başlık metni boyutu */
+}
