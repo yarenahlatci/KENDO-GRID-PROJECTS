@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <h1>İleri Seviye Kendo UI Grid</h1>
+    <div id="grid"></div>
+
+    <script>
+      $(document).ready(function () {
+        var refreshInterval;
+
+        // Kendo UI Grid oluşturma
+        $("#grid").kendoGrid({
+          dataSource: {
+            transport: {
+              read: {
+                url: "https://jsonplaceholder.typicode.com/users",
+                dataType: "json",
+              },
+            },
+            schema: {
+              model: {
+                id: "id",
+                fields: {
+                  id: { editable: false, nullable: true },
+                  name: { type: "string", validation: { required: true } },
+                  email: { type: "string" },
+                  phone: { type: "string" },
+                  company: { type: "string" },
+                },
+              },
+            },
+            pageSize: 20,
+            serverPaging: true,
+            serverSorting: true,
+            serverFiltering: true,
+            serverAggregates: true,
+            aggregate: [{ field: "id", aggregate: "count" }],
+          },
+          height: 550,
+          pageable: {
+            input: true,
+            numeric: false,
+          },
+          sortable: true,
+          filterable: true,
+          groupable: true,
+          columnMenu: true,
+          resizable: true,
+          reorderable: true,
+          editable: "popup",
+          toolbar: ["create", "save", "cancel", "excel", "pdf"],
+          excel: {
+            fileName: "KullaniciVerileri.xlsx",
+            filterable: true,
+          },
+          pdf: {
+            fileName: "KullaniciVerileri.pdf",
+            allPages: true,
+          },
+          columns: [
+            {
+              field: "id",
+              title: "ID",
+              width: "50px",
+              aggregates: ["count"],
+              footerTemplate: "Toplam: #=count#",
+            },
+            { field: "name", title: "İsim" },
+            { field: "email", title: "E-posta" },
+            { field: "phone", title: "Telefon" },
+            { field: "company", title: "Şirket", width: "200px" },
+            {
+              command: [
+                { name: "details", text: "Detaylar", click: showDetails },
+                { name: "custom", text: "Özel İşlem", click: customFunction },
+              ],
+              title: "&nbsp;",
+              width: "200px",
+            },
+          ],
+          detailTemplate: "<div class='grid-detail'></div>",
+          detailInit: detailInit,
+          dataBound: function () {
+            var grid = this;
+            clearInterval(refreshInterval); // Her yenilemede interval'i sıfırla
+
+            refreshInterval = setInterval(function () {
+              if (!grid.dataSource.hasChanges()) {
+                // Eğer veri kaynağında bir değişiklik yoksa, yenile
+                grid.dataSource.read();
+              }
+            }, 30000); // 30 saniyede bir veri güncelleme
+          },
+        });
+
+        function showDetails(e) {
+          e.preventDefault();
+          var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+          alert("Detaylar: " + JSON.stringify(dataItem));
+        }
+
+        function customFunction(e) {
+          e.preventDefault();
+          var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+          alert("Özel İşlem gerçekleştirildi: " + dataItem.name);
+        }
+
+        function detailInit(e) {
+          $("<div/>")
+            .appendTo(e.detailCell)
+            .kendoGrid({
+              dataSource: {
+                data: [
+                  { orderID: 1, productName: "Ürün A", quantity: 3 },
+                  { orderID: 2, productName: "Ürün B", quantity: 7 },
+                ],
+              },
+              scrollable: false,
+              sortable: true,
+              pageable: true,
+              columns: [
+                { field: "orderID", title: "Sipariş ID", width: "50px" },
+                { field: "productName", title: "Ürün Adı", width: "100px" },
+                { field: "quantity", title: "Miktar", width: "50px" },
+              ],
+            });
+        }
+      });
+    </script>
+  </body>
+</html>

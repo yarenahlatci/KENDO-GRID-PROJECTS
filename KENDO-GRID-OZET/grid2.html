@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <link
+      href="https://kendo.cdn.telerik.com/themes/8.2.1/default/default-main.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.806/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <h1>Orta Seviye Kendo UI Grid</h1>
+    <div id="grid"></div>
+
+    <script>
+      $(document).ready(function () {
+        // Kendo UI Grid oluşturma
+        $("#grid").kendoGrid({
+          dataSource: {
+            transport: {
+              read: {
+                url: "https://jsonplaceholder.typicode.com/users", // JSON veri kaynağı
+                dataType: "json",
+              },
+              update: {
+                url: "https://jsonplaceholder.typicode.com/users", // Güncelleme URL'si
+                dataType: "json",
+                type: "PUT",
+              },
+              destroy: {
+                url: "https://jsonplaceholder.typicode.com/users", // Silme URL'si
+                dataType: "json",
+                type: "DELETE",
+              },
+              create: {
+                url: "https://jsonplaceholder.typicode.com/users", // Oluşturma URL'si
+                dataType: "json",
+                type: "POST",
+              },
+              parameterMap: function (data, type) {
+                if (type !== "read") {
+                  return JSON.stringify(data);
+                }
+              },
+            },
+            schema: {
+              model: {
+                id: "id", // Benzersiz kimlik alanı
+                fields: {
+                  id: { editable: false, nullable: true },
+                  name: { type: "string", validation: { required: true } },
+                  email: { type: "string" },
+                  phone: { type: "string" },
+                },
+              },
+            },
+            pageSize: 5,
+          },
+          height: 550,
+          pageable: true,
+          sortable: true,
+          filterable: true,
+          groupable: true,
+          editable: "inline",
+          toolbar: ["create"], // Yeni kayıt oluşturma düğmesi
+          columns: [
+            { field: "id", title: "ID", width: "50px" },
+            { field: "name", title: "İsim" },
+            { field: "email", title: "E-posta" },
+            { field: "phone", title: "Telefon" },
+            { command: ["edit", "destroy"], title: "&nbsp;", width: "150px" }, // Düzenle ve sil düğmeleri
+          ],
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<!--
+Veri Kaynağı (dataSource):
+transport: CRUD (Create, Read, Update, Delete) işlemlerini tanımlar. Her işlem için bir URL ve veri türü belirtilmiştir.
+schema: Verilerin model yapısını tanımlar. Bu, her alanın türünü ve bazı temel doğrulama kurallarını içerir.
+pageSize: Grid'in her sayfada göstereceği kayıt sayısını ayarlar.
+
+Grid Özellikleri:
+height: Grid yüksekliği.
+pageable: Sayfalandırmayı etkinleştirir.
+sortable: Sıralama özelliğini etkinleştirir.
+filterable: Filtreleme özelliğini etkinleştirir.
+groupable: Gruplandırma özelliğini etkinleştirir.
+editable: Grid'deki verilerin inline (satır içi) olarak düzenlenmesini sağlar.
+toolbar: Üst araç çubuğu, yeni kayıt ekleme düğmesini içerir.
+columns: Sütunları ve düzenleme/silme komutlarını tanımlar.
+
+3. JSON Veri Kullanımı:Bu projede, örnek bir JSON API'sinden (JSONPlaceholder) kullanıcı verilerini çektim.
+
+-->
